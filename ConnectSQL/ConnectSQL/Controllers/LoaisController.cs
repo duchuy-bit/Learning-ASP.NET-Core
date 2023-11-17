@@ -48,7 +48,7 @@ namespace ConnectSQL.Controllers
                 _context.Add(loai);
                 _context.SaveChanges();
 
-                return Ok(loai);
+                return StatusCode(StatusCodes.Status200OK, _context.Loais.ToArray());
             }
             catch (Exception ex)
             {

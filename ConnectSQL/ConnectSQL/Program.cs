@@ -1,5 +1,9 @@
-using ConnectSQL.Data;
+﻿using ConnectSQL.Data;
+using ConnectSQL.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +12,35 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 
-//=========================
+//========== Connect SQL Server ===============
 builder.Services.AddDbContext<MyDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("MyDB"));
+});
+
+// =============== Responsitory Pattern ===================
+builder.Services.AddScoped<ILoaiResponsitory, LoaiResponsitory>();
+//builder.Services.AddScoped<ILoaiResponsitory, LoaiResponsitory>();
+
+
+//========== Add Authentication JSON Web Token Bearer ===============
+var secertKey = builder.Configuration["AppSettings:SecretKey"];
+var secretKeyBytes = Encoding.UTF8.GetBytes(secertKey!);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+{
+    opt.TokenValidationParameters = new TokenValidationParameters
+    {
+        // Tự cấp Token
+        ValidateIssuer = false,
+        ValidateAudience = false,
+
+        // Ký vào Token 
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+
+        ClockSkew = TimeSpan.Zero,
+    };
 });
 //=========================
 
@@ -26,6 +55,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseAuthentication();
 }
 
 app.UseHttpsRedirection();
