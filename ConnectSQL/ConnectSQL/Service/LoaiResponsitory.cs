@@ -37,6 +37,7 @@ namespace ConnectSQL.Service
 
         public List<LoaiVM> GetAll()
         {
+            System.Diagnostics.Debug.WriteLine("LoaiResponsitory Get All");
             var loais = _context.Loais.Select(loai => new LoaiVM
             {
                 MaLoai = loai.MaLoai,

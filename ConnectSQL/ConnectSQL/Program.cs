@@ -20,6 +20,7 @@ builder.Services.AddDbContext<MyDbContext>(option =>
 
 // =============== Responsitory Pattern ===================
 builder.Services.AddScoped<ILoaiResponsitory, LoaiResponsitory>();
+builder.Services.AddScoped<IHangHoaResponsitory, HangHoaResponsitory>();
 //builder.Services.AddScoped<ILoaiResponsitory, LoaiResponsitory>();
 
 
