@@ -3,6 +3,7 @@ using ConnectSQL.Models;
 using ConnectSQL.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace ConnectSQL.Controllers
 {
@@ -12,7 +13,8 @@ namespace ConnectSQL.Controllers
     {
         private readonly IHangHoaResponsitory _hangHoaResponsitory;
 
-        public HangHoaController(IHangHoaResponsitory hangHoaResponsitory) {
+        public HangHoaController(IHangHoaResponsitory hangHoaResponsitory)
+        {
             _hangHoaResponsitory = hangHoaResponsitory;
         }
 
@@ -23,8 +25,8 @@ namespace ConnectSQL.Controllers
             return Ok(new
             {
                 Success = true,
-                Data = _hangHoaResponsitory?.GetAll() 
-            }) ;
+                Data = _hangHoaResponsitory?.GetAll()
+            });
         }
 
         [HttpPost]
@@ -40,10 +42,70 @@ namespace ConnectSQL.Controllers
                     Success = true,
                     Data = hanghoaNew
                 });
-            }catch (Exception ex) { 
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpGet("{idHangHoa}")]
+        //public IActionResult GetWithId(Guid idHangHoa)
+        //{
+        //    try
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("GetWithId");
+        //        var data = _hangHoaResponsitory.GetById(idHangHoa);
+        //        if (data == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        return Ok(new
+        //        {
+        //            Success = true,
+        //            Data = data
+        //        });
+        //    }
+        //    catch (Exception ex) { 
+        //        return BadRequest($"Could not find {idHangHoa}");  
+        //    }
+        //}
+
+        [HttpGet("{search}")]
+
+        public IActionResult Search(string? search, double? from, double? to, string? sortBy, int page = 1)
+        {
+            try
+            {
+                Debug.WriteLine("Search");
+                var result = _hangHoaResponsitory.FindHangHoa(search, from, to, sortBy, page);
+                return Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{idHangHoa}")]
+        public IActionResult Update(Guid idHangHoa, HangHoaVM hanghoa)
+        {
+            try
+            {
+                _hangHoaResponsitory.Update(idHangHoa, hanghoa);
+                return Ok(hanghoa);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+        }
+
 
         //public static List<HangHoa> hangHoas = new();
 

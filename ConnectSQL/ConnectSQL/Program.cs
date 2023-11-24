@@ -1,4 +1,5 @@
 ﻿using ConnectSQL.Data;
+using ConnectSQL.Models;
 using ConnectSQL.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IHangHoaResponsitory, HangHoaResponsitory>();
 
 
 //========== Add Authentication JSON Web Token Bearer ===============
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 var secertKey = builder.Configuration["AppSettings:SecretKey"];
 var secretKeyBytes = Encoding.UTF8.GetBytes(secertKey!);
 
@@ -56,7 +58,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
     app.UseAuthentication();
+    app.UseAuthorization(); 
 }
 
 app.UseHttpsRedirection();

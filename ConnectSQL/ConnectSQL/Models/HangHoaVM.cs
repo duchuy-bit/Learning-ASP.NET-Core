@@ -14,4 +14,12 @@ namespace ConnectSQL.Models
 
         public int? MaLoai { get; set; }
     }
+
+    public class HangHoaFind
+    {
+        public Guid MaHH { get; set; }
+        public string TenHH { get; set; }
+        public double DonGia { get; set; }
+        public String TenLoai { get; set; }
+    }
 }
