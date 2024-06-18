@@ -1,4 +1,4 @@
-# Learning-API.NET-Core
+# Learning-ASP.NET-Core
 
 + Connect My SQL Server
 + Create API GET, POST, PUT, DELETE to Query Data
