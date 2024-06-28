@@ -1,0 +1,57 @@
+﻿@* @model ShopManager.ViewModels.ContactModel *@
+
+@model ShopManager.ViewModels.CountryRadio
+
+
+<div>
+    <h1 class="display-4">Welcome</h1>
+
+    <form method="post" asp-controller="Home" asp-action="RadioButtonInput">
+
+@*         @Html.RadioButtonFor(model => model.Gender, value:"Male")
+        Male
+        <br/>
+        @Html.RadioButtonFor(model => model.Gender, value:"Female")
+        Female
+
+        <br/>
+        <br/>
+
+        @Html.RadioButton("Gender", value:"Male") Male
+        <br />
+        @Html.RadioButton("Gender", value:"Female", new {@checked = true}) Female
+        <br />
+        <br />
+
+        @Html.RadioButton("GenderOne", value:"Male") Male
+        <br />
+        @Html.RadioButton("GenderOne", value:"Female") Female
+        <br />
+        <br />
+
+
+        <input  type="radio" value="Male" id="iGender" name="iGender" 
+            checked="checked"/>Male
+        <br/>
+        <input type="radio" value="Female" id="iGender" name="iGender" />Female
+ *@
+
+        @foreach (var item in Model.ListCountry)
+        {
+            if (item.IsSelected)
+            {
+                @Html.RadioButtonFor(model => model.CountryName, item.Name, new {@checked = true}) @item.Name
+                <br />
+            }
+            else
+            {
+                @Html.RadioButtonFor(model => model.CountryName, item.Name, new {@checked = false}) @item.Name
+                <br />
+            }
+        }
+
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+
+</div>

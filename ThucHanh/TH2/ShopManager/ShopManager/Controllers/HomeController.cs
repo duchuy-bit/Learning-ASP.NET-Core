@@ -154,6 +154,34 @@ namespace ShopManager.Controllers
         #endregion
 
 
+        #region RadioButton
+
+        public IActionResult RadioButtonInput()
+        {
+            CountryRadio objCountry = new CountryRadio();
+
+            List<CountryModel> listCountry = new List<CountryModel>();
+            listCountry.Add(new CountryModel() { Id = 1, Name = "Việt Nam",IsSelected = false});
+            listCountry.Add(new CountryModel() { Id = 2, Name = "Nga", IsSelected = false });
+            listCountry.Add(new CountryModel() { Id = 3, Name = "Thai Lan", IsSelected = true });
+            listCountry.Add(new CountryModel() { Id = 4, Name = "Nhat Ban", IsSelected = false });
+            listCountry.Add(new CountryModel() { Id = 5, Name = "Trung Quóc", IsSelected = false });
+            listCountry.Add(new CountryModel() { Id = 6, Name = "Sigapore", IsSelected = false });
+
+            objCountry.ListCountry = listCountry;
+
+            return View(objCountry);
+        }
+
+        [HttpPost]
+        public IActionResult RadioButtonInput(CountryRadio countryRadio)
+        {
+            return Content(countryRadio.CountryName);
+        }
+
+        #endregion
+
+
 
         public IActionResult Privacy()
         {
