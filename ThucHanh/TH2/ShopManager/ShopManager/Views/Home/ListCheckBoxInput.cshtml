@@ -1,0 +1,26 @@
+﻿@model ShopManager.ViewModels.CheckBoxesViewModel
+
+<div>
+    <h1 class="display-4">Welcome</h1>
+
+    <form method="post" asp-controller="Home" asp-action="ListCheckBoxInput">
+        
+        @foreach(var checkbox in Model.CheckBoxes)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" 
+                    value="@checkbox.Value" 
+                    id="checkbox_@checkbox.Value" 
+                    name="sports"
+                    checked="@checkbox.IsChecked"
+                >
+                <label class="form-check-label" for="flexCheckDisabled">
+                    @checkbox.Text
+                </label>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+
+</div>

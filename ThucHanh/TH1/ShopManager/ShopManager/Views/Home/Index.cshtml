@@ -1,0 +1,26 @@
+﻿@model IEnumerable<ShopManager.Models.ThucHanh1>
+
+@{
+    ViewData["Title"] = "Hello World";
+}
+
+<div>
+    <h1 class="display-4">Welcome</h1>
+    <h1>Hello World</h1>
+    @foreach (var item in @Model)
+    {
+        <div style="border-style: solid">
+            <h3>Id: @item.Id</h3>
+            @if (item.Id % 2 == 1)
+            {
+                <h3>Tên: @item.Name</h3>
+            }
+            else
+            {
+                <h3>Mô tả: @item.Description</h3>
+            }
+            
+        </div>
+        <br />
+    }
+</div>

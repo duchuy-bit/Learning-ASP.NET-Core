@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DHShop", "DHShop\DHShop.csproj", "{5B3ECB98-778A-49BF-AC0A-E508FC4AE1DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B3ECB98-778A-49BF-AC0A-E508FC4AE1DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B3ECB98-778A-49BF-AC0A-E508FC4AE1DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B3ECB98-778A-49BF-AC0A-E508FC4AE1DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B3ECB98-778A-49BF-AC0A-E508FC4AE1DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {55FC287F-C4EA-47B2-9BD0-65B2ABCF88B6}
+	EndGlobalSection
+EndGlobal

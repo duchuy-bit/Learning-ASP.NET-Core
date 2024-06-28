@@ -1,0 +1,15 @@
+﻿@model ShopManager.ViewModels.CountryViewModel
+
+<div>
+    <h1 class="display-4">Welcome</h1>
+
+    <form method="post" asp-action="SelectInput">
+        
+        <select class="form-select" asp-items="@Model.myListCountry" asp-for="SelectedCountry">
+            <option value="NoSelectedValue">-- Please Select A Country --</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+
+</div>
