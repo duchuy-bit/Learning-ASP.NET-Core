@@ -1,0 +1,17 @@
+﻿@model ShopManager.Models.PhoneSelect
+
+<div>
+    <h1 class="display-4">Welcome</h1>
+
+    <div style="width:300px">
+    <form method="post" asp-action="SelectInput">
+
+        <select class="form-select" asp-items="@Model.listPhone" asp-for="phoneSelected">
+            <option value="NoSelectedValue">-- Please Select Phone --</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    </div>
+
+</div>

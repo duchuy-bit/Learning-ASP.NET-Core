@@ -1,0 +1,22 @@
+﻿@model ShopManager.Models.SoNguyen
+
+@{
+    ViewData["Title"] = "Hello World";
+}
+
+<div>
+    <h1 class="display-4">Welcome</h1>
+
+    <form method="post" asp-action="TinhTong">
+        <label>So a: </label>
+        <input type="text" asp-for="@Model.soNguyenA" value="" />
+        <br />
+        <br />
+        <label>So b: </label>
+        <input type="text" asp-for="@Model.soNguyenB" value="" />
+        <br />
+        <br />
+        <button type="submit">Save</button>
+    </form>
+
+</div>
