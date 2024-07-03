@@ -18,9 +18,8 @@ namespace ShopManager.Controllers
         #region TinhTong
         public IActionResult Index()
         {
-            SoNguyen soNguyen = new SoNguyen();
 
-            return View(soNguyen);
+            return View();
         }
 
         [HttpPost]
@@ -98,7 +97,7 @@ namespace ShopManager.Controllers
         [HttpPost]
         public IActionResult CheckBoxInput(AcceptTermsViewModel modelInput)
         {
-            var value = modelInput.AcceptTerms == true ? "True" : "False";
+            var value = modelInput.AcceptTerms == true ? "Accepted Term" : "Don't Accept Term";
             return Content(value);
         }
 

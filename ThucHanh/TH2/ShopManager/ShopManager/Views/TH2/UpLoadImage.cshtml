@@ -1,0 +1,22 @@
+﻿@model ShopManager.ViewModels.ImageUpload
+
+<div>
+    <h1 class="display-4">Welcome</h1>
+
+    @if (Model?.Path != null)
+    {
+        <img src="~/Hinh/HinhUpLoad/@Model.Path" class="img-fluid rounded" alt="Image" 
+            width="300" height="300">
+    }
+
+    <div style="width:300px">
+        <form method="post" enctype="multipart/form-data" asp-controller="TH2" asp-action="UpLoadImage">
+
+            <input name="Hinh" type="file" accept="image/gif, image/jpeg, image/png" class="form-control">
+            <br/>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+
+</div>
