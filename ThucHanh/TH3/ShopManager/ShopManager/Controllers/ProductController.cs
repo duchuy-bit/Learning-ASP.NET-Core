@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ShopManager.DAL;
+using ShopManager.Helper;
 using ShopManager.Models;
 
 namespace ShopManager.Controllers
@@ -8,6 +10,7 @@ namespace ShopManager.Controllers
     public class ProductController : Controller
     {
         ProductDAL productDAL = new ProductDAL();
+        CategoryDAL categoryDAL = new CategoryDAL();
 
         // GET: ProductController
         public ActionResult Index()
@@ -15,36 +18,89 @@ namespace ShopManager.Controllers
             List<Product> products = new List<Product>();
             products = productDAL.getAll();
 
-            Console.WriteLine("---");
-            Console.WriteLine(products);
-            Console.WriteLine("---");
-
             return View(products);
         }
 
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            // Lấy Thông tin Product từ Id
+            Product product = new Product();
+            product = productDAL.GetProductById(id);
+
+            return View(product);
         }
 
         // GET: ProductController/Create
         public ActionResult Create()
         {
-            return View();
+            // Khai báo Model Category
+            List<Category> categories = new List<Category>();
+
+            // Lấy danh sách Category từ DataBase
+            categories = categoryDAL.getAll();
+
+            // Khai báo Model
+            ProductForm productAddNew = new ProductForm();
+
+            // Tạo danh sách Input Select
+            productAddNew.ListCategory = new List<SelectListItem>();
+            foreach (var item in categories)
+            {
+                productAddNew.ListCategory.Add(
+                    new SelectListItem
+                    {
+                        Text = item.Title,
+                        Value = item.Id.ToString()
+                    }
+                );
+            }
+            return View(productAddNew);
         }
 
         // POST: ProductController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(ProductForm productAddNew, IFormFile Img)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                //tự động lấy thời gian CreateAt và UpdateAt theo giờ hệ thống
+                DateTime now = DateTime.Now;
+                productAddNew.CreateAt = now;
+                productAddNew.UpdateAt = now;
+
+                //Upload Hinh
+                var ImageName = ImageHelper.UpLoadImage(Img, "SanPham");
+                productAddNew.Img = ImageName;
+
+                //lấy Id Category
+                int IdCategory = Convert.ToInt32(productAddNew.IdCategorySelected);
+                productAddNew.CategoryId = IdCategory;
+
+                // truy vấn tới CSDL
+                bool IsInserted = productDAL.AddNew(productAddNew);
+
+                // Kiểm tra truy vấn SQL thành công hay không?
+                if (IsInserted)
+                {
+                    // Truy vấn Thành công
+                    Console.WriteLine("Insert Product Success");
+                    TempData["SuccessMessage"] = "Insert Success";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    // Truy vấn Thất bại
+                    Console.WriteLine("Insert Product Fail");
+                    TempData["ErrorMessage"] = "Insert Fail";
+                    return View();
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                //Error
+                Console.WriteLine("Insert Product error ", ex.Message);
                 return View();
             }
         }
@@ -52,17 +108,84 @@ namespace ShopManager.Controllers
         // GET: ProductController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            // Lấy Thông tin Product từ Id
+            Product product = new Product();
+            product = productDAL.GetProductById(id);
+
+            //Khai báo Model ProductForm
+            ProductForm productForm = new ProductForm();
+            productForm.Id = id;
+            productForm.Title = product.Title;
+            productForm.Content = product.Content;
+            productForm.Img = product.Img;
+            productForm.Price = product.Price;
+            productForm.CreateAt = product.CreateAt;
+            productForm.UpdateAt = product.UpdateAt;
+            productForm.Discount = product.Discount;
+            productForm.CategoryId = product.CategoryId;
+            productForm.CategoryTitle = product.CategoryTitle;
+
+            //lấy danh sách Category Từ DB
+            List<Category> categories = new List<Category>();
+            categories = categoryDAL.getAll();
+
+            // Tạo danh sách Input Select
+            productForm.ListCategory = new List<SelectListItem>();
+            foreach (var item in categories)
+            {
+                productForm.ListCategory.Add(
+                    new SelectListItem
+                    {
+                        Text = item.Title,
+                        Value = item.Id.ToString()
+                    }
+                );
+            }
+
+            return View(productForm);
         }
 
         // POST: ProductController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, ProductForm productEdit, IFormFile ImageUpload)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                //tự động lấy thời gian UpdateAt theo giờ hệ thống
+                DateTime now = DateTime.Now;
+                productEdit.UpdateAt = now;
+
+                //Nếu có hình ảnh được Upload
+                if(ImageUpload != null)
+                {
+                    //Upload Hinh
+                    var ImageName = ImageHelper.UpLoadImage(ImageUpload, "SanPham");
+                    productEdit.Img = ImageName;
+                }
+
+                //lấy Id Category
+                int IdCategory = Convert.ToInt32(productEdit.IdCategorySelected);
+                productEdit.CategoryId = IdCategory;
+
+                // truy vấn tới CSDL
+                bool isSuccess = productDAL.UpdateProduct(productEdit, id);
+
+                // Kiểm tra truy vấn SQL thành công hay không?
+                if (isSuccess)
+                {
+                    // Truy vấn Thành công
+                    Console.WriteLine("Update Product Success");
+                    TempData["SuccessMessage"] = "Update Success";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    // Truy vấn Thất bại
+                    Console.WriteLine("Update Product Fail");
+                    TempData["ErrorMessage"] = "Update Fail";
+                    return View();
+                }
             }
             catch
             {
@@ -73,6 +196,9 @@ namespace ShopManager.Controllers
         // GET: ProductController/Delete/5
         public ActionResult Delete(int id)
         {
+            // Lấy Thông tin Product từ Id
+            Product product = new Product();
+            product = productDAL.GetProductById(id);
             return View();
         }
 
@@ -83,7 +209,24 @@ namespace ShopManager.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                //Truy vấn SQL
+                var IsSuccess = productDAL.DeleteProduct(id);
+
+                // Kiểm tra truy vấn SQL thành công hay không?
+                if (IsSuccess)
+                {
+                    // Truy vấn Thành công
+                    Console.WriteLine("Delete Product Success");
+                    TempData["SuccessMessage"] = "Update Success";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    // Truy vấn Thất bại
+                    Console.WriteLine("Delete Product Fail");
+                    TempData["ErrorMessage"] = "Update Fail";
+                    return View();
+                }
             }
             catch
             {

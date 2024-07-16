@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace ShopManager.Models
 {
@@ -18,8 +19,6 @@ namespace ShopManager.Models
         [MaxLength(500, ErrorMessage = "Tối đa 500 kí tự")]
         public string Content { get; set; }
 
-        [Display(Name = "Image")]
-        [Required(ErrorMessage = "*")]
         public string Img { get; set; }
 
         [Display(Name = "Price")]
@@ -45,8 +44,12 @@ namespace ShopManager.Models
         public string CategoryTitle { get; set; }
     }
 
-    public class ProductAddNew : Product
+    public class ProductForm : Product
     {
-        
+        //[Display(Name = "Category")]
+        //[Required(ErrorMessage = "*")]
+        public string IdCategorySelected { get; set; }
+        public List<SelectListItem>? ListCategory { get; set; }
+
     }
 }
