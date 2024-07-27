@@ -86,21 +86,60 @@ CREATE TABLE paymentDetail (
 )
 GO
 
+--CREATE TABLE menu(
+--	id INT NOT NULL IDENTITY(1,1) PRIMARY KEY ,
+--	parentId INT null,
+--	title NVARCHAR(100),
+--	menuArea NVARCHAR(100) null,
+--	menuController NVARCHAR(100) null,
+--	menuAction NVARCHAR(100) null,
+--	menuParams INT null,
+--	menuIndex int,
+--	isVisible BIT DEFAULT 1 , -- 1: display || 0: hidden 
+--)
+--GO
 CREATE TABLE menu(
 	id INT NOT NULL IDENTITY(1,1) PRIMARY KEY ,
-	parentId INT,
+	parentId INT NULL,
 	title NVARCHAR(100),
-	menuArea NVARCHAR(100),
-	MenuController NVARCHAR(100),
-	MenuAction NVARCHAR(100),
-	MenuParams INT,
-	controller NVARCHAR(100),
+	menuUrl NVARCHAR(100),
 	menuIndex int,
-	isVisible BIT,
+	isVisible BIT DEFAULT 1, --1: DISPLAY || 0: HIDDEN
 )
 GO
 
 
+
+insert into menu (title, parentId,menuUrl, menuIndex, isVisible )
+values 
+(N'Trang chủ', NULL, N'/',1, 1),
+(N'Cửa hàng', NULL, N'/Product',2, 1),
+(N'Danh mục', NULL, NULL ,3, 1),
+(N'Điện thoại', 3, N'/Product?idcategory=1',4, 1),
+(N'Laptop', 3, N'/Product?idcategory=2',5, 1),
+(N'PC', 3, N'/Product?idcategory=3',6, 1),
+(N'Tablet', 3, N'/Product?idcategory=4',7, 1),
+(N'Phụ kiện', 3, N'/Product?idcategory=5',8, 1),
+(N'Smart Watch', 3, N'/Product?idcategory=6',9, 1),
+(N'Liên hệ', NULL, N'/',10, 1),
+(N'Trang quản trị', NULL, N'/Admin/ProductAdmin',11, 1)
+go
+
+
+select * from menu
+order by menuIndex
+--values
+--(N'Trang chủ',null ,N'',N'Home',N'Index', null , 1, 1 ),
+--(N'Cửa hàng', null ,N'',N'Product',N'Index',null, 2, 1),
+--(N'Loại sản phẩm',null, null, null, null, null, 3, 1),
+--(N'Điện Thoại', 3, N'',N'Product',N'Index',1 , 1 , 1),
+--(N'Laptop', 3, N'',N'Product',N'Index',2 , 1 , 1),
+--(N'PC', 3, N'',N'Product',N'Index',3 , 1 , 1),
+--(N'Tablet', 3, N'',N'Product',N'Index',4 , 1 , 1),
+--(N'Smart Watch', 3, N'',N'Product',N'Index',5 , 1 , 1),
+--(N'Contact', null , N'',N'Product',N'Index',5 , 1 , 1),
+--(N'Admin', null , N'Admin',N'Product',N'Index',5 , 1 , 1)
+--go
 
 
 ---------------------- INSERT category -----------------
@@ -162,3 +201,17 @@ go
 ---------------------- INSERT paymentDetail -----------------
 
 ---------------------- INSERT menu -----------------
+--insert into menu (title, parentId, menuArea,MenuController,MenuAction,MenuParams, menuIndex, isVisible )
+--values
+--(N'Trang chủ',null ,N'',N'Home',N'Index', null , 1, 1 ),
+--(N'Cửa hàng', null ,N'',N'Product',N'Index',null, 2, 1),
+--(N'Loại sản phẩm',null, null, null, null, null, 3, 1),
+--(N'Điện Thoại', 3, N'',N'Product',N'Index',1 , 1 , 1),
+--(N'Laptop', 3, N'',N'Product',N'Index',2 , 1 , 1),
+--(N'PC', 3, N'',N'Product',N'Index',3 , 1 , 1),
+--(N'Tablet', 3, N'',N'Product',N'Index',4 , 1 , 1),
+--(N'Smart Watch', 3, N'',N'Product',N'Index',5 , 1 , 1),
+--(N'Contact', null , N'',N'Product',N'Index',5 , 1 , 1),
+--(N'Admin', null , N'Admin',N'Product',N'Index',5 , 1 , 1)
+--go
+

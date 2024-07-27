@@ -1,0 +1,18 @@
+﻿@model IEnumerable<ShopManager.Models.CategoryMenu>
+
+<div class="mb-3">
+    <h4>Categories</h4>
+    <ul class="list-unstyled fruite-categorie">
+        @foreach (var item in Model)
+        {
+            <li>
+                <div class="d-flex justify-content-between fruite-name">
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-idCategory="@item.Id">
+                        <i class="fas fa-apple-alt me-2"></i>@item.Title
+                    </a>
+                    <span>(@item.Count)</span>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
