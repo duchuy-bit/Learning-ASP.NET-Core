@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +8,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
     {
-        option.LoginPath = "/Customer/SignIn";
+        option.LoginPath = "/Customer/SignIn"; 
+        //truy cập trang có yêu cầu đăng nhập
+        //mà người dùng chưa đăng nhập
+        //thì sẽ tự động chuyển sang đường dẫn được khai báo trong LoginPath
         option.AccessDeniedPath = "/AccessDenied";
+        //Khi người dùng truy cập trang 
+        // mà người dùng đó không được quyền truy cập
+        // thì sẽ tự động chuyển sang đường dẫn được khai báo trong AccessDeniedPath
     });
 
 var app = builder.Build();

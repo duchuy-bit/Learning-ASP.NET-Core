@@ -98,6 +98,8 @@ GO
 --	isVisible BIT DEFAULT 1 , -- 1: display || 0: hidden 
 --)
 --GO
+
+
 CREATE TABLE menu(
 	id INT NOT NULL IDENTITY(1,1) PRIMARY KEY ,
 	parentId INT NULL,
@@ -121,7 +123,7 @@ values
 (N'Tablet', 3, N'/Product?idcategory=4',7, 1),
 (N'Phụ kiện', 3, N'/Product?idcategory=5',8, 1),
 (N'Smart Watch', 3, N'/Product?idcategory=6',9, 1),
-(N'Liên hệ', NULL, N'/',10, 1),
+(N'Liên hệ', NULL, N'/contact',10, 1),
 (N'Trang quản trị', NULL, N'/Admin/ProductAdmin',11, 1)
 go
 

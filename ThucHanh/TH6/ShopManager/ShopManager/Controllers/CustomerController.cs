@@ -96,71 +96,70 @@ namespace ShopManager.Controllers
         [HttpPost]
         public async Task<IActionResult> SignInAsync(CustomerSignIn customerSignIn, string? ReturnUrl)
         {
-
-            ViewBag.ReturnUrl = ReturnUrl;
-
-            Customer? customer = new Customer();
-            customer = customerDAL.GetCustomerByEmail(customerSignIn.Email);
-
-            if (customer == null)
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("Loi", "Không có khách hàng này");
-            }
-            else
-            {
-                if (customer.IsActive  == 0)
+                ViewBag.ReturnUrl = ReturnUrl;
+
+                Customer? customer = new Customer();
+                customer = customerDAL.GetCustomerByEmail(customerSignIn.Email);
+
+                if (customer == null)
                 {
-                    ModelState.AddModelError("Thông báo", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ Admin");
+                    ModelState.AddModelError("Loi", "Không có khách hàng này");
                 }
                 else
                 {
-                    string hashPassword = customerSignIn.Password.ToMd5Hash(customer.RandomKey);
-                    if (customer.Password != hashPassword)
+                    if (customer.IsActive == 0)
                     {
-                        ModelState.AddModelError("Thông báo", "Sai mật khẩu");
+                        ModelState.AddModelError("Thông báo", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ Admin");
                     }
                     else
                     {
-
-                        var claims = new List<Claim>
+                        string hashPassword = customerSignIn.Password.ToMd5Hash(customer.RandomKey);
+                        if (customer.Password != hashPassword)
+                        {
+                            ModelState.AddModelError("Thông báo", "Sai mật khẩu");
+                        }
+                        else
+                        {
+                            var claims = new List<Claim>
                             {
                                 new Claim("CustomerEmail", customer.Email),
                                 new Claim(ClaimTypes.Name, customer.FirstName),
                                 new Claim("CustomerFirstName", customer.FirstName),
                                 new Claim("CustomerLastName", customer.LastName),
                                 new Claim("CustomerId", customer.Id.ToString()),
-
                                 
-
-                                //claim -role động                                 
+                                //claim -role động   (Cấp quyền)                              
                                 new Claim(ClaimTypes.Role, customer.Role == 1 ? "Administrator" : "Customer"),
                             };
 
-                        var claimIdentity = new ClaimsIdentity(claims, "login");
-                        var claimPricipal = new ClaimsPrincipal(claimIdentity);
+                            var claimIdentity = new ClaimsIdentity(claims, "login");
+                            var claimPricipal = new ClaimsPrincipal(claimIdentity);
 
-                        await HttpContext.SignInAsync(claimPricipal);
+                            await HttpContext.SignInAsync(claimPricipal);
 
-                        if (Url.IsLocalUrl(ReturnUrl))
-                        {
-                            return Redirect(ReturnUrl);
+                            if (Url.IsLocalUrl(ReturnUrl))
+                            {
+                                return Redirect(ReturnUrl);
+                            }
+                            else
+                            {
+                                return Redirect("/");
+                            }
+
                         }
-                        else
-                        {
-                            return Redirect("/");
-                        }
-
                     }
                 }
+
+                return View();
             }
-
-
-            return View();
+            else return View();
         }
 
         //------------ SIGN OUT -------------
         [Authorize]
-        public async Task<IActionResult> SignOut()
+        public async Task<IActionResult> SignOutAsync()
         {
             await HttpContext.SignOutAsync();
             return Redirect("/");
@@ -188,8 +187,9 @@ namespace ShopManager.Controllers
                 var ImageName = ImageHelper.UpLoadImage(ImgUpload, "KhachHang");
                 customerSignUp.Img = ImageName;
             }
-            else if (customerSignUp.Img == null)
+            else 
             {
+                //Sử dụng avatar mặc định của project
                 customerSignUp.Img = "avatar-default.jpg";
             }
 
@@ -221,8 +221,6 @@ namespace ShopManager.Controllers
                 return RedirectToAction("SignUp");
             }
 
-        }
-
-        
+        }        
     }
 }
