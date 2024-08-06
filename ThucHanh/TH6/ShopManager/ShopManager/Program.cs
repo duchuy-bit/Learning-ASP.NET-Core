@@ -18,6 +18,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         // thì sẽ tự động chuyển sang đường dẫn được khai báo trong AccessDeniedPath
     });
 
+//Cho phép Field Null trong Form
+builder.Services.AddControllersWithViews(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,8 +40,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "Admin",
-    pattern: "{area:exists}/{controller=Category}/{action=Index}/{id?}");
+    name: "admin",
+    pattern: "{area:exists}/{controller=ProductAdmin}/{action=Index}/{id?}");
 
 
 app.MapControllerRoute(

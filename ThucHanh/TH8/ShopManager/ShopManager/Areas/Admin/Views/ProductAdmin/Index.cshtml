@@ -1,0 +1,204 @@
+﻿@* @model IEnumerable<ShopManager.Areas.Admin.Models.ProductAdmin> *@
+@model ShopManager.Areas.Admin.Models.ProductAdminModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<form asp-action="index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-action="index" class="btn btn-outline-dark">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width:50px">
+                <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-sortOrder="@ViewData["IdSortParm"]">
+                    Id
+                    @if (ViewData["SortColumn"]!.ToString() == "")
+                    {
+                        <span>&darr;</span>
+                        // mũi tên đi xuống
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "id_desc")
+                    {
+
+                        <span>&uarr;</span>
+                        // mũi tên đi lên
+                    }
+                </a>
+            </th>
+            <th>
+                <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-sortOrder="@ViewData["TitleSortParm"]">
+                    Title
+                    @if (ViewData["SortColumn"]!.ToString() == "title")
+                    {
+                        <span>&uarr;</span>
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "title_desc")
+                    {
+                        <span>&darr;</span>
+                    }
+                </a>
+            </th>
+            <th>
+                Content
+            </th>
+            <th>
+                Image
+            </th>
+            <th>
+                <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-sortOrder="@ViewData["PriceSortParm"]">
+                    Price
+                    @if (ViewData["SortColumn"]!.ToString() == "price")
+                    {
+                        <span>&uarr;</span>
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "price_desc")
+                    {
+                        <span>&darr;</span>
+                    }
+                </a>
+            </th>
+            <th style="width:70px">
+                <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-sortOrder="@ViewData["RateSortParm"]">
+                    Rate
+                    @if (ViewData["SortColumn"]!.ToString() == "rate")
+                    {
+                        <span>&uarr;</span>
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "rate_desc")
+                    {
+                        <span>&darr;</span>
+                    }
+                </a>
+            </th>
+            <th>
+                Create At
+            </th>
+            <th>
+                Update At
+            </th>
+            <th>
+                CategoryId
+            </th>
+            <th>
+                CategoryTitle
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ProductAdmins)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    <span style="line-height:1.5rem; height:4.5rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;  overflow: hidden;">
+                        @Html.DisplayFor(modelItem => item.Content)
+                    </span>
+                </td>
+                <td>
+                    <img src="~/images/sanpham/@item.Img" class="img-fluid " style="width:100px; height: 60px; object-fit:contain" />
+                </td>
+                <td>
+                    @item.Price.ToString("#,##0 VND")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryTitle)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
+                    @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
+                    @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
+                </td>
+            </tr>
+        }
+    </tbody>
+
+
+</table>
+<br />
+<!-- Pagination Start-->
+<div class="col-12">
+    <div class="pagination d-flex justify-content-center mt-5">
+        <!--Button Previous-->
+        @if (Model.CurrentPageIndex > 1)
+        {
+            <a asp-controller="ProductAdmin" asp-action="index"
+               asp-route-page="@(Model.CurrentPageIndex -1)"
+               asp-route-searchString="@ViewData["CurrentFilter"]"
+               asp-route-sortOrder="@ViewData["SortColumn"]"
+               class="btn btn-outline-dark mx-2">
+                &laquo;
+            </a>
+        }
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            @if (i != Model.CurrentPageIndex)
+            {
+                <a asp-controller="ProductAdmin" asp-action="index"
+                   asp-route-page="@i"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-sortOrder="@ViewData["SortColumn"]"
+                   class="btn btn-outline-dark mx-2">
+                    @i
+                </a>
+            }
+            else
+            {
+                //Current Page
+                <a class="btn btn btn-outline-dark active mx-2">@i</a>
+            }
+        }
+        <!-- Button Next -->
+        @if (Model.PageCount != Model.CurrentPageIndex)
+        {
+            <a asp-controller="ProductAdmin" asp-action="index"
+               asp-route-page="@(Model.CurrentPageIndex + 1)"
+               asp-route-searchString="@ViewData["CurrentFilter"]"
+               asp-route-sortOrder="@ViewData["SortColumn"]"
+               class="btn btn-outline-dark mx-2">
+                &raquo;
+            </a>
+        }
+    </div>
+</div>
+<!-- Pagination End-->

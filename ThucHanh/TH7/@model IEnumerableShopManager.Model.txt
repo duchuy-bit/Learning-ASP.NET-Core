@@ -1,0 +1,206 @@
+@model IEnumerable<ShopManager.Models.CartItem>
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Cart</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+        <li class="breadcrumb-item active text-white">Cart</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+<!-- Cart Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Products</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Handle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="idProduct-@item.IdProduct">
+                            <th scope="row">
+                                <div class="d-flex align-items-center">
+                                    <img src="~/images/SanPham/@item.Img" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="@item.Img">
+                                </div>
+                            </th>
+                            <td>
+                                <p class="mb-0 mt-4">@item.Name</p>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4">@item.Price.ToString("#,##0 VND")</p>
+                            </td>
+                            <td>
+                                <div class="input-group quantity mt-4" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button product-id="@item.IdProduct"
+                                                onclick="clickBtnQuantity(false)"
+                                                class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text"
+                                           id="quantityProduct"
+                                           product-id-input="@item.IdProduct"
+                                           onblur="onBlurQuantity(this)"
+                                           class="form-control form-control-sm text-center border-0"
+                                           value="@item.Quantity">
+                                    <div class="input-group-btn">
+                                        <button product-id="@item.IdProduct"
+                                                onclick="clickBtnQuantity(true)"
+                                                class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4">@item.Total.ToString("#,##0 VND")</p>
+                            </td>
+                            <td>
+                                <button class="btn btn-md rounded-circle bg-light border mt-4">
+                                    <i class="fa fa-times text-danger"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row g-4 justify-content-end">
+            <div class="col-8"></div>
+            <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                <div class="bg-light rounded">
+                    <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                        <h5 class="mb-0 ps-4 me-4">Tổng tiền</h5>
+                        <p class="mb-0 pe-4">@Model.Sum(p => p.Total).ToString("#,##0 VND")</p>
+                    </div>
+                    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Proceed Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart Page End -->
+<script>
+    // ---------------------------- Change Quantity With Input Field Start -------------------------------
+    let quantityField = document.getElementById("quantityProduct");
+
+    // Khi Người dùng nhập số lượng sau đó nhấn Enter
+    quantityField.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            // lấy ProductID
+            var productId = event.target.getAttribute('product-id-input');
+            // Nếu nút không phải là thẻ con của nút (như <i> trong trường hợp này)
+            if (!productId) {
+                productId = event.target.parentElement.getAttribute('product-id-input');
+            }
+            //Lấy số lượng
+            const quantityValue = event.target.value;
+            console.log("product-id ", productId, " quantityValue ", quantityValue);
+
+            //Gọi Hàm InputQuantityCart trong Cart Controller
+            inputQuantityCart(productId, quantityValue);
+        }
+    });
+
+    //Khi người dùng nhập số lượng và không focus vào input nữa
+    function onBlurQuantity(input) {
+        //Lấy số lượng
+        const quantityValue = input.value;
+        console.log("quantityValue ", quantityValue);
+
+        // lấy ProductID
+        var productId = event.target.getAttribute('product-id-input');
+        // Nếu nút không phải là thẻ con của nút (như <i> trong trường hợp này)
+        if (!productId) {
+            productId = event.target.parentElement.getAttribute('product-id-input');
+        }
+
+        //Gọi Hàm InputQuantityCart trong Cart Controller
+        inputQuantityCart(productId, quantityValue);
+    }
+
+    // Hàm Ajax gọi Action InputQuantityCart trong Cart Controller
+    function inputQuantityCart(productId, value) {
+        $.ajax({
+            url: '@Url.Action("InputQuantityCart","Cart")',
+            data: { id: productId, quantity: value },
+            success: function (data) {
+                console.log("ChangeQuantityCart Success ", productId, ' quantity: ', value);
+                //Nếu số lượng hàng hóa <=0 thì không hiển thị hàng hóa đó
+                if (value <= 0) {
+                    const idName = "#idProduct-" + productId;
+                    console.log(idName);
+                    $(idName).remove();
+                }
+                //call is successfully completed and we got result in data
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //some errror, some show err msg to user and log the error
+                alert(xhr.responseText);
+            }
+        });
+    }
+    // ---------------------------- Change Quantity With Input Field End -------------------------------
+
+    // ---------------------------- Change Quantity With Two Buttons Start -------------------------------
+
+    function clickBtnQuantity(increment) {
+        // increment = true -> Nhấn button Tăng số lượng
+        // increment = false -> Nhấn button Giảm số lượng
+
+        // Lấy product-id từ nút được nhấn
+        var productId = event.target.getAttribute('product-id');
+
+        // Nếu nút không phải là thẻ con của nút (như <i> trong trường hợp này)
+        if (!productId) {
+            productId = event.target.parentElement.getAttribute('product-id');
+        }
+
+        // Ví dụ: Hiển thị productId và giá trị increment trong console
+        console.log('Product ID:', productId);
+        console.log('Increment:', increment);
+
+        // Ajax gọi action ChangeQuantityCart trong Cart Controller
+        $.ajax({
+            url: '@Url.Action("ChangeQuantityCart","Cart")',
+            data: { id: productId, isIncrement: increment, quantity: 1 },
+            success: function (data) {
+                console.log("ChangeQuantityCart Success ", productId, ' Increment: ', increment);
+
+                //Lấy giá trị trong ô Input theo ProductId
+                const queryString = '[product-id-input="' + productId + '"]';
+                const inputValue = document.querySelectorAll(queryString)[0].value;
+                // Nếu giá trị trong ô Input <= 0 thì remove hàng hóa đó
+                if (inputValue <= 0) {
+                    const idName = "#idProduct-" + productId;
+                    console.log(idName);
+                    $(idName).remove();
+                }
+
+                console.log("inputValue ", inputValue);
+
+                //call is successfully completed and we got result in data
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //some errror, some show err msg to user and log the error
+                alert(xhr.responseText);
+            }
+        });
+    }// ---------------------------- Change Quantity With Two Buttons End -------------------
+
+
+</script>
