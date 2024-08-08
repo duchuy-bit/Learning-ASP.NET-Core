@@ -68,7 +68,7 @@ namespace ShopManager.DAL
                 }
             }
 
-            
+
             return CheckOutSuccess;
         }
 

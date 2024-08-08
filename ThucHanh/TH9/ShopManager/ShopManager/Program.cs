@@ -1,6 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using ShopManager.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+// Đăng ký các dịch vụ
+builder.Services.AddTransient<MailHelper>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -9,7 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
     {
-        option.LoginPath = "/Customer/SignIn"; 
+        option.LoginPath = "/Customer/SignIn";
         //truy cập trang có yêu cầu đăng nhập
         //mà người dùng chưa đăng nhập
         //thì sẽ tự động chuyển sang đường dẫn được khai báo trong LoginPath

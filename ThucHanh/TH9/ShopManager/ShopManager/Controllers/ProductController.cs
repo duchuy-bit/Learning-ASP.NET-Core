@@ -33,7 +33,7 @@ namespace ShopManager.Controllers
 
             //Tạo model để hiển thị
             ProductPagination model = new ProductPagination();
-            model.Products= products;
+            model.Products = products;
             model.CurrentPageIndex = page;
             model.PageCount = maxPage;
 

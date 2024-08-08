@@ -41,9 +41,52 @@ namespace ShopManager.Models
         [MaxLength(200, ErrorMessage = "Tối đa 200 kí tự")]
         public string Password { get; set; }
         public string RandomKey { get; set; }
-        public DateTime RegisterAt{ get; set; }
+        public DateTime RegisterAt { get; set; }
         public DateTime UpdateAt { get; set; }
         public int IsActive { get; set; }
         public int Role { get; set; }
+    }
+    public class CustomerSignIn
+    {
+        [Display(Name = "Email")]
+        [Required(ErrorMessage = "*")]
+        [MaxLength(50, ErrorMessage = "Tối đa 50 kí tự")]
+        public string Email { get; set; }
+
+        [Display(Name = "Mật khẩu")]
+        [Required(ErrorMessage = "*")]
+        [MaxLength(200, ErrorMessage = "Tối đa 200 kí tự")]
+        public string Password { get; set; }
+    }
+
+    public class CustomerForgotPassword
+    {
+        [Display(Name = "Email")]
+        [Required(ErrorMessage = "*")]
+        [MaxLength(50, ErrorMessage = "Tối đa 50 kí tự")]
+        public string Email { get; set; }
+
+        public string RandomCode { get; set; }
+
+        [Display(Name = "OTP")]
+        [Required(ErrorMessage = "*")]
+        [MaxLength(10, ErrorMessage = "Tối đa 10 kí tự")]
+        public string OTP { get; set; }
+    }
+
+    public class CustomerNewPassword
+    {
+        public string Email { get; set; }
+        public string RandomKey { set; get; }
+
+        [Display(Name = "Mật khẩu mới")]
+        [Required(ErrorMessage = "*")]
+        [MaxLength(200, ErrorMessage = "Tối đa 200 kí tự")]
+        public string NewPassWord { set; get; }
+
+        [Display(Name = "Nhập lại mật khẩu mới")]
+        [Required(ErrorMessage = "*")]
+        [MaxLength(200, ErrorMessage = "Tối đa 200 kí tự")]
+        public string Confirm_NewPassWord { set; get; }
     }
 }

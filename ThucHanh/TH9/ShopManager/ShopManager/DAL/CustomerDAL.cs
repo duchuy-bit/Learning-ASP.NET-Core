@@ -1,8 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
-using ShopManager.Areas.Admin.Models;
 using ShopManager.Database;
 using ShopManager.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace ShopManager.DAL
 {
@@ -170,6 +168,38 @@ namespace ShopManager.DAL
 
             if (!hasData) return null;
             return customer;
+        }
+
+
+        public bool ResetPassword(CustomerNewPassword customerResetPass)
+        {
+            connect.openConnection();
+
+            DateTime now = DateTime.Now;
+            int isSuccess = 0;
+
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connect.getConnecttion();
+                command.CommandType = System.Data.CommandType.Text;
+
+                string query = @"update customer
+                    set randomKey = @randomKey , password = @password , updateAt = @updateAt
+                    where customer.email = @email
+                ";
+
+                command.CommandText = query;
+
+                command.Parameters.AddWithValue("@randomKey", customerResetPass.RandomKey);
+                command.Parameters.AddWithValue("@password", customerResetPass.NewPassWord);
+                command.Parameters.AddWithValue("@email", customerResetPass.Email);
+                command.Parameters.AddWithValue("@updateAt", now);
+
+
+                isSuccess = command.ExecuteNonQuery();
+            }
+            connect.closeConnection();
+            return isSuccess > 0;
         }
     }
 }

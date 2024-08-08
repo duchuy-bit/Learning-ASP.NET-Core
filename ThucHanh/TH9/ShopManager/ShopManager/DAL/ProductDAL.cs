@@ -1,6 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
-using ShopManager.Areas.Admin.Models;
 using ShopManager.Database;
 using ShopManager.Models;
 

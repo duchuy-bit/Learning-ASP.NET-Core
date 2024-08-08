@@ -4,7 +4,7 @@ using ShopManager.Models;
 
 namespace ShopManager.ViewComponents
 {
-    public class CartViewComponent: ViewComponent
+    public class CartViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke()
         {

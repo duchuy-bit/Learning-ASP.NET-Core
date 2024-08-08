@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using ShopManager.DAL;
 using ShopManager.Helper;
 using ShopManager.Models;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 namespace ShopManager.Controllers

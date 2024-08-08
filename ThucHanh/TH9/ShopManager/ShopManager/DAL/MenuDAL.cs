@@ -31,15 +31,15 @@ namespace ShopManager.DAL
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         Title = reader["Title"].ToString() ?? "",
-                        ParentId = reader["ParentId"] != DBNull.Value  ? Convert.ToInt32(reader["ParentId"]) : null,
+                        ParentId = reader["ParentId"] != DBNull.Value ? Convert.ToInt32(reader["ParentId"]) : null,
                         MenuUrl = reader["MenuUrl"]?.ToString() ?? null,
                         MenuIndex = Convert.ToInt32(reader["MenuIndex"]),
                         isVisible = Convert.ToInt32(reader["isVisible"]) == 1
                     };
 
                     list.Add(MenuItem);
-                }                
-            }            
+                }
+            }
             connect.closeConnection();
             return list;
         }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ShopManager.Models
+﻿namespace ShopManager.Models
 {
     public class CategoryMenu
     {

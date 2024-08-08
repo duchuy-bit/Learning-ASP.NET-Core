@@ -4,19 +4,27 @@ using Microsoft.AspNetCore.Mvc;
 using ShopManager.DAL;
 using ShopManager.Helper;
 using ShopManager.Models;
-using System.Data;
+using System.Net.Mail;
 using System.Security.Claims;
 
 namespace ShopManager.Controllers
 {
     public class CustomerController : Controller
     {
+        private readonly MailHelper _mailHelper;
+
+        public CustomerController(MailHelper mailHelper)
+        {
+            _mailHelper = mailHelper;
+        }
+
         CustomerDAL customerDAL = new CustomerDAL();
         public IActionResult Index()
         {
             return View();
         }
 
+        #region Profile
         // Profile 
         [Authorize]
         public IActionResult Profile()
@@ -46,6 +54,9 @@ namespace ShopManager.Controllers
             return View(customer);
         }
 
+        #endregion
+
+        #region UpdateProfile
         // Update Detail Customer  
         [HttpPost]
         public IActionResult UpdateDetailCustomer(Customer customerUpdate, IFormFile ImgUpload)
@@ -88,7 +99,8 @@ namespace ShopManager.Controllers
                 TempData["ProfileErrorMessage"] = "Lỗi hệ thống";
                 return RedirectToAction("Profile");
             }
-        }      
+        }
+        #endregion
 
         #region SIGN_UP
         // ------------------ SIGN UP --------------------
@@ -157,7 +169,8 @@ namespace ShopManager.Controllers
                     TempData["SignUpErrorMessage"] = "Lỗi hệ thống";
                     return RedirectToAction("SignUp");
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 return View();
@@ -237,7 +250,8 @@ namespace ShopManager.Controllers
                     return View();
                 }
                 else return View();
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.Write(ex.ToString());
                 return View();
@@ -253,6 +267,138 @@ namespace ShopManager.Controllers
             await HttpContext.SignOutAsync();
             return Redirect("/");
         }
+        #endregion
+
+        #region FORGOT_PASSWORD
+        //NuGet Package: MailKit
+        public IActionResult ForgotPassword()
+        {
+            //Random 1 chuỗi 6 số ngẫu nhiên
+            string randomString = "";
+            var rd = new Random();
+            for (int i = 0; i < 6; i++)
+            {
+                randomString = randomString + rd.Next(0, 10).ToString();
+            }
+
+            // tạo Model lưu chuỗi random
+            CustomerForgotPassword customer = new CustomerForgotPassword();
+            customer.RandomCode = randomString;
+
+
+            return View(customer);
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(CustomerForgotPassword customerForgot)
+        {
+            if (customerForgot.RandomCode != customerForgot.OTP)
+            {
+                return View();
+            }
+            CustomerNewPassword customer = new CustomerNewPassword();
+            customer.Email = customerForgot.Email;
+
+            return RedirectToAction("ResetPassword", customer);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotCheckEmailExistAsync(string email, string otp)
+        {
+            //Nếu Email Null
+            if (email == null)
+            {
+                return Json("Vui lòng nhập email");
+            }
+
+            //Nếu không tim thấy tài khoản nào sử dụng email đã nhập
+            Customer? customerCheckMail = new Customer();
+
+            customerCheckMail = customerDAL.GetCustomerByEmail(email);
+            if (customerCheckMail == null)
+            {
+                return Json("Không tìm thấy Email");
+            }
+
+            //nếu tìm thấy
+            //Gửi Email đã OTP
+
+            string titleMail = "XÁC THỰC PHIÊN GIAO DỊCH ";
+            string OTPHtml = otp;
+
+            string body = _mailHelper.PopulateBody(OTPHtml);
+            _mailHelper.SendHtmlFormattedEmail(email, titleMail, body);
+
+            return Json("OK");
+        }
+
+
+
+        #endregion
+
+        #region Reset_NewPassword
+        public IActionResult ResetPassword(CustomerNewPassword customerNewPassword)
+        {
+            return View(customerNewPassword);
+        }
+
+        [HttpPost]
+        public IActionResult ResetPasswordPost(CustomerNewPassword customerNewPassword)
+        {
+            try
+            {
+                //Password và Confirm Password khác nhau
+                if (customerNewPassword.NewPassWord != customerNewPassword.Confirm_NewPassWord)
+                {
+                    TempData["ResetPasswordErrorMessage"] = "Vui lòng mật khẩu giống nhau";
+                    return RedirectToAction("ResetPassword", customerNewPassword);
+                }
+
+                //Kiểm tra Email đã được đăng ký tài khoản hay chưa
+                Customer? customerExist = new Customer();
+                customerExist = customerDAL.GetCustomerByEmail(customerNewPassword.Email);
+                if (customerExist == null)
+                {
+                    TempData["SignUpErrorMessage"] = "Email chưa được đăng ký";
+                    return View();
+                }
+
+                //HashPassword
+                customerNewPassword.RandomKey = PasswordHelper.GenerateRandomKey();
+                customerNewPassword.NewPassWord = customerNewPassword.NewPassWord.ToMd5Hash(customerNewPassword.RandomKey);
+
+                bool isSuccess = customerDAL.ResetPassword(customerNewPassword);
+
+                // Kiểm tra truy vấn SQL thành công hay không?
+                if (isSuccess)
+                {
+                    // Truy vấn Thành công
+                    Console.WriteLine("Update Password Success");
+                    if (HttpContext.User.FindFirstValue("CustomerId") == null)
+                    {
+                        TempData["SignInSuccessMessage"] = "Cấp lại mật khẩu thành công";
+                        return RedirectToAction("SignIn");
+                    }
+                    TempData["ProfileSuccessMessage"] = "Cấp lại mật khẩu thành công";
+                    return RedirectToAction("Profile");
+                }
+                else
+                {
+                    // Truy vấn Thất bại
+                    Console.WriteLine("Update Customer Fail");
+                    TempData["SignInSuccessMessage"] = "Lỗi hệ thống";
+                    return RedirectToAction("SignIn");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                TempData["ResetPasswordErrorMessage"] = ex.Message;
+                return RedirectToAction("ResetPassword");
+            }
+        }
+
+
         #endregion
     }
 }

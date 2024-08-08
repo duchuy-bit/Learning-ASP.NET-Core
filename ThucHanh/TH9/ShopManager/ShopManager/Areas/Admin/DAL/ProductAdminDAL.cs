@@ -1,8 +1,6 @@
-﻿using Microsoft.CodeAnalysis.Elfie.Diagnostics;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using ShopManager.Areas.Admin.Models;
 using ShopManager.Database;
-using System.Data;
 
 namespace ShopManager.Areas.Admin.DAL
 {
@@ -226,7 +224,7 @@ namespace ShopManager.Areas.Admin.DAL
                 //Câu truy vấn
                 string query = @" 
                     SELECT Count(*) as CountRow
-                    FROM product a join category b on a.categoryId = b.Id " ;
+                    FROM product a join category b on a.categoryId = b.Id ";
 
                 // nối thêm điều kiện, Nếu điều kiện không có thì condition=""
                 // query = query + ""; thì vẫn là query -> không ảnh hưởng

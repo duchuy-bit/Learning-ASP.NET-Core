@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using ShopManager.DAL;
 using ShopManager.Models;
 using System.Diagnostics;
-using System.Drawing.Printing;
 
 namespace ShopManager.Controllers
 {
@@ -30,7 +28,7 @@ namespace ShopManager.Controllers
             return View();
         }
 
-        [Route("/404")] 
+        [Route("/404")]
         public IActionResult PageNotfound()
         {
             return View();
