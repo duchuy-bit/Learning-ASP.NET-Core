@@ -59,7 +59,7 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "admin",
-    pattern: "{area:exists}/{controller=ProductAdmin}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=HomeAdmin}/{action=Index}/{id?}");
 
 
 app.MapControllerRoute(
