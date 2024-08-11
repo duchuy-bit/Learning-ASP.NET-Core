@@ -42,8 +42,17 @@ namespace ShopManager.Areas.Admin.Models
         public string Password { get; set; }
         public string RandomKey { get; set; }
         public DateTime RegisterAt { get; set; }
-        public DateTime UpdateAt { get; set; }
+        public DateTime? UpdateAt { get; set; }
         public int IsActive { get; set; }
         public int Role { get; set; }
+    }
+
+    public class CustomerAdmin_Pagination
+    {
+        public List<CustomerAdmin> CustomerAdmins { get; set; }
+
+        public int CurrentPageIndex { get; set; }
+
+        public int PageCount { get; set; }
     }
 }

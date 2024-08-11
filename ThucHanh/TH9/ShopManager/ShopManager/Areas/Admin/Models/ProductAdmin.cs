@@ -69,4 +69,9 @@ namespace ShopManager.Areas.Admin.Models
         public int PageCount { get; set; }
     }
 
+    public class ProductAdminModel_Category: ProductAdminModel
+    {
+        public List<CategoryAdmin> categories { get; set; }
+    }
+
 }

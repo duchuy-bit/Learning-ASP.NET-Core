@@ -1,97 +1,372 @@
-﻿@model IEnumerable<ShopManager.Areas.Admin.Models.CustomerAdmin>
+﻿@model ShopManager.Areas.Admin.Models.CustomerAdmin_Pagination
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Customer</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Img)
-            </th>
-            <th>
-                Trạng thái tài khoản
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Img)
-            </td>
-            <td>
-                    @if (item.IsActive == 1)
-                    {
-                        <a>Đang hoạt động</a>
-                    }
-                    else
-                    {
-                        <a>Vô hiệu hóa</a>
-                    }
-                </td>
-            <td>
-                    @if(item.Role == 1)
-                    {
-                        <a>Quản trị viên</a>
-                    }
-                    else
-                    {
-                        <a>Khách hàng</a>
-                    }
-                </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
+<!-- Alert Success Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["SuccessMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-success alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Success!</strong> @TempData["SuccessMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+<!-- Alert Success End -->
+<!-- Alert Error Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-danger alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Error!</strong> @TempData["ErrorMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Error End -->
+
+<div class="d-flex justify-content-between mb-2">
+    <div class="d-flex align-items-center justify-content-start">
+        <!-- Search-->
+        <form asp-area="Admin" asp-controller="CustomerAdmin" asp-action="index" asp-route-filter="@ViewData["CurrentFilter"]">
+            <div class="d-flex align-items-center ms-4"
+                 style="height: 40px;  border-radius:5px; border: 1px solid grey; overflow:hidden">
+                 <!--Input-->
+                <input type="text" id="text_search_customerAdmin" name="search" placeholder="Search by key" value="@ViewData["CurrentSearch"]"
+                       style="height: 36px; width: 300px; border:none; padding: 10px;" />
+
+                <!-- Icon Clear text-->
+                <a id="clear_search_customerAdmin" asp-action="index" style="visibility:hidden; padding: 4px 10px 4px 10px; ">
+                    <i class="bi bi-x-lg" style="color:black"></i>
+                </a>
+
+                <!-- Icon kính lúp-->
+                <button type="submit" style="display:flex; align-items:center; padding: 0px 15px;height:40px; border-left: 1px solid grey; background-color:#eee">
+                    <i class="bi bi-search" style="font-size:20px"></i>
+                </button>
+            </div>
+        </form>
+
+        <!--Dropdown Filter-->
+        <div class="dropdown ms-3">
+            <button class="btn  dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    style="border: 1px solid grey; width: auto; height: 28px">
+                <!-- HTML co the thay doi khi chon dropdown-->
+                <div id="dropdown_filter_customer_admin">
+                </div>
+
+                <!--Icon filter-->
+                <i class="bi bi-funnel-fill" style="margin-left:3px"></i>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item"
+                   asp-area="Admin" asp-controller="CustomerAdmin" asp-action="Index" asp-route-search="@ViewData["CurrentSearch"]" asp-route-filter="">All</a>
+                <a class="dropdown-item"
+                   asp-area="Admin" asp-controller="CustomerAdmin" asp-action="Index" asp-route-search="@ViewData["CurrentSearch"]" asp-route-filter="isActive=1">Status: Active</a>
+                <a class="dropdown-item"
+                   asp-area="Admin" asp-controller="CustomerAdmin" asp-action="Index" asp-route-search="@ViewData["CurrentSearch"]" asp-route-filter="isActive=0">Status: InActive</a>
+                <a class="dropdown-item"
+                   asp-area="Admin" asp-controller="CustomerAdmin" asp-action="Index" asp-route-search="@ViewData["CurrentSearch"]" asp-route-filter="role=1">Role: Admin</a>
+                <a class="dropdown-item"
+                   asp-area="Admin" asp-controller="CustomerAdmin" asp-action="Index" asp-route-search="@ViewData["CurrentSearch"]" asp-route-filter="role=0">Role: User</a>
+            </div>
+        </div>
+    </div>
+
+    <!--Create New-->
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-asp-controller="CustomerAdmin" asp-action="index"
+                       asp-route-search="@ViewData["CurrentSearch"]"
+                       asp-route-filter="@ViewData["CurrentFilter"]"
+                       asp-route-sortOrder="@ViewData["IdSortParm"]" style="white-space:nowrap">
+                        #ID
+                        @if (ViewData["SortColumn"]!.ToString() == "")
+                        {
+                            <span>&darr;</span>
+                            // mũi tên đi xuống
+                        }
+                        @if (ViewData["SortColumn"]!.ToString() == "id_desc")
+                        {
+                            <span>&uarr;</span>
+                            // mũi tên đi lên
+                        }
+                    </a>
+                </th>
+                <th>
+                    <a asp-asp-controller="CustomerAdmin" asp-action="index"
+                       asp-route-search="@ViewData["CurrentSearch"]"
+                       asp-route-filter="@ViewData["CurrentFilter"]"
+                       asp-route-sortOrder="@ViewData["FirstNameSortParm"]" style="white-space:nowrap">
+                        First Name
+                        @if (ViewData["SortColumn"]!.ToString() == "firstName")
+                        {
+                            <span>&darr;</span>
+                            // mũi tên đi xuống
+                        }
+                        @if (ViewData["SortColumn"]!.ToString() == "firstName_desc")
+                        {
+                            <span>&uarr;</span>
+                            // mũi tên đi lên
+                        }
+                    </a>
+                </th>
+                <th width="150px">
+                    <a asp-asp-controller="CustomerAdmin" asp-action="index"
+                       asp-route-search="@ViewData["CurrentSearch"]"
+                       asp-route-filter="@ViewData["CurrentFilter"]"
+                       asp-route-sortOrder="@ViewData["LastNameSortParm"]" style="white-space:nowrap">
+                        Last Name
+                        @if (ViewData["SortColumn"]!.ToString() == "lastName")
+                        {
+                            <span>&darr;</span>
+                            // mũi tên đi xuống
+                        }
+                        @if (ViewData["SortColumn"]!.ToString() == "lastName_desc")
+                        {
+                            <span>&uarr;</span>
+                            // mũi tên đi lên
+                        }
+                    </a>
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Image
+                </th>
+                <th>
+                    <a asp-asp-controller="CustomerAdmin" asp-action="index"
+                       asp-route-search="@ViewData["CurrentSearch"]"
+                       asp-route-filter="@ViewData["CurrentFilter"]"
+                       asp-route-sortOrder="@ViewData["RegisteredAtSortParm"]" style="white-space:nowrap">
+                        Creation Date
+                        @if (ViewData["SortColumn"]!.ToString() == "registeredAt")
+                        {
+                            <span>&darr;</span>
+                            // mũi tên đi xuống
+                        }
+                        @if (ViewData["SortColumn"]!.ToString() == "registeredAt_desc")
+                        {
+                            <span>&uarr;</span>
+                            // mũi tên đi lên
+                        }
+                    </a>
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Role
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CustomerAdmins)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        <span class="text_in_one_line">@item.LastName</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    <td>
+                        <span class="text_in_one_line">
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </span>
+                    </td>
+                    <td>
+                        <img src="~/images/KhachHang/@item.Img"
+                             style="width: 50px; height: 50px;border-radius: 50%; object-fit: cover" />
+                    </td>
+                    <td>
+                        @item.RegisterAt.ToString("dd/MM/yyy HH:mm")
+                    </td>
+
+                    <td>
+                        @if (item.IsActive == 1)
+                        {
+                            <a>Active</a>
+                        }
+                        else
+                        {
+                            <a style="font-weight:bold; color:red">InActive</a>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Role == 1)
+                        {
+                            <a style="font-weight:bold">Admin</a>
+                        }
+                        else
+                        {
+                            <a>User</a>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <a asp-controller="customerAdmin" asp-action="Edit" asp-route-id="@item.Id" class="btn">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a asp-controller="customerAdmin" asp-action="Details" asp-route-id="@item.Id"
+                                       class="dropdown-item">
+                                        <i class="bi bi-eye"></i> Preview
+                                    </a>
+                                    <a asp-controller="customerAdmin" asp-action="Delete" asp-route-id="@item.Id"
+                                       class="dropdown-item">
+                                        <i class="bi bi-trash"></i> Detele
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Pagination Start-->
+<div class="col-12">
+    <div class="pagination d-flex justify-content-center mt-5">
+        <!--Button Previous-->
+        @if (Model.CurrentPageIndex > 1)
+        {
+            <a asp-controller="CustomerAdmin" asp-action="index"
+               asp-route-filter="@ViewData["CurrentFilter"]"
+               asp-route-page="@(Model.CurrentPageIndex -1)"
+               asp-route-search="@ViewData["CurrentSearch"]"
+               asp-route-sortOrder="@ViewData["SortColumn"]"
+               class="btn btn-outline-dark mx-2">
+                &laquo;
+            </a>
+        }
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            @if (i != Model.CurrentPageIndex)
+            {
+                <a asp-controller="CustomerAdmin" asp-action="index"
+                   asp-route-filter="@ViewData["CurrentFilter"]"
+                   asp-route-page="@i"
+                   asp-route-search="@ViewData["CurrentSearch"]"
+                   asp-route-sortOrder="@ViewData["SortColumn"]"
+                   class="btn btn-outline-dark mx-2">
+                    @i
+                </a>
+            }
+            else
+            {
+                //Current Page
+                <a class="btn btn btn-outline-dark active mx-2">@i</a>
+            }
+        }
+        <!-- Button Next -->
+        @if (Model.PageCount > Model.CurrentPageIndex)
+        {
+            <a asp-controller="CustomerAdmin" asp-action="index"
+               asp-route-filter="@ViewData["CurrentFilter"]"
+               asp-route-page="@(Model.CurrentPageIndex + 1)"
+               asp-route-search="@ViewData["CurrentSearch"]"
+               asp-route-sortOrder="@ViewData["SortColumn"]"
+               class="btn btn-outline-dark mx-2">
+                &raquo;
+            </a>
+        }
+    </div>
+</div>
+<!-- Pagination End-->
+@{
+    string textButtonFilter = "";
+
+    switch (ViewData["CurrentFilter"]?.ToString())
+    {
+        case "isActive=1":
+            textButtonFilter = "Status: Active";
+            break;
+        case "isActive=0":
+            textButtonFilter = "Status: InActive";
+            break;
+        case "role=1":
+            textButtonFilter = "Role: Admin";
+            break;
+        case "role=0":
+            textButtonFilter = "Role: User";
+            break;
+
+
+        default:
+            textButtonFilter = "";
+            break;
+    }
+}
+
+<script>
+    const htmlFilter = "@textButtonFilter";
+
+    document.getElementById("dropdown_filter_customer_admin").innerHTML = htmlFilter;
+
+    // ============Show/Hidden button clear text Search =================
+    const textSearch = document.getElementById('text_search_customerAdmin');
+    const btnClear = document.getElementById('clear_search_customerAdmin');
+
+    function handleClearTextButton() {
+        const text = textSearch.value;
+        if (text.trim() != "") {
+            btnClear.style.visibility = "visible";
+        } else {
+            btnClear.style.visibility = "hidden";
+        }
+    }
+
+    textSearch.addEventListener('input', handleClearTextButton);
+
+    window.onload = handleClearTextButton;
+
+</script>
+
+<style>
+    .text_in_one_line {
+        line-height: 1.5rem;
+        height: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    *, ::after, ::before {
+        box-sizing: unset;
+    }
+</style>

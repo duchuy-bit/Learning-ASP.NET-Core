@@ -9,70 +9,95 @@
 <div>
     <h4>Product</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Img)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Img)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreateAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdateAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoryId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoryId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoryTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoryTitle)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="row">
+                <div class="col-md-4 d-flex align-items-center">
+                    <span class="me-3 detail_title">ID: </span>
+                    <span>@Model.Id</span>
+                </div>
+                <div class="col-md-8 d-flex align-items-center">
+                    <span class="me-3 detail_title">Title: </span>
+                    <span>@Model.Title</span>
+                </div>
+            </div>
+            <br />
+
+            <div class="d-flex">
+                <span class="me-3 detail_title">Content: </span>
+                <span>@Model.Content</span>
+            </div>
+            <br />
+
+            <!-- Number and Image-->
+            <div class="row">
+                <!--Number and Dropdown-->
+                <div class="col-md-7">
+
+                    <div class="d-flex align-items-center mt-5">
+                        <span class="me-3 detail_title">Price: </span>
+                        <span>@Model.Price.ToString("#,##0 VND")</span>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-5 d-flex align-items-center">
+                            <span class="me-3 detail_title">Rating: </span>
+                            <span>@Model.Rate</span>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-5 d-flex align-items-center">
+                            <span class="me-3 detail_title">Category: </span>
+                            <span>@Model.CategoryTitle</span>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-5 d-flex align-items-center">
+                            <span class="me-3 detail_title">Create: </span>
+                            <span>@Model.CreateAt</span>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-5 d-flex align-items-center">
+                            <span class="me-3 detail_title">Update: </span>
+                            <span>@Model.UpdateAt</span>
+                        </div>
+                    </div>
+                    <br />
+
+                </div>
+                <!--Image-->
+                <div class="col-md-5">
+                    <span class="detail_title">Product Image</span>
+                    <div class="col-md-10 mt-2" style="position:relative">
+                        <img src="~/images/SanPham/@Model.Img"
+                             id="image_preview"
+                             class="w-100 img-fluid rounded" />
+                    </div>
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+
+
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id  }) |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><span style="color:white; padding: 0px 20px">Edit</span></a>
+    <br />
+    <br />
+    <a class="btn btn-link" asp-action="Index">Back to List</a>
 </div>
+<style>
+    .detail_title {
+        font-weight: bold
+    }
+</style>

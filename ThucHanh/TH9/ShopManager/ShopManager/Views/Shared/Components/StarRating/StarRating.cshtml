@@ -1,0 +1,25 @@
+﻿@model double
+
+@{
+    // Làm tròn số sao đến số nguyên gần nhất
+    int starFull = (int)Math.Floor(Model);  // Sao đầy
+    double starFraction = Model - starFull;  // Phần lẻ
+}
+
+<div class="star-rating" style="color:#f7be27">
+    @for (int i = 1; i <= 5; i++)
+    {
+        if (i <= starFull)
+        {
+            <i class="bi bi-star-fill"></i>  <!-- Sao đầy -->
+        }
+        else if (i == starFull + 1 && starFraction >= 0.5)
+        {
+            <i class="bi bi-star-half"></i>  <!-- Sao nửa -->
+        }
+        else
+        {
+            <i class="bi bi-star"></i>  <!-- Sao rỗng -->
+        }
+    }
+</div>

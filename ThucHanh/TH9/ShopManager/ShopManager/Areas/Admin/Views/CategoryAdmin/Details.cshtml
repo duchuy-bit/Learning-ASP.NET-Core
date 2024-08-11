@@ -9,40 +9,52 @@
 <div>
     <h4>Category</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreateAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdateAt)
-        </dd>
-    </dl>
+    <div>
+        <!-- ID & title-->
+        <div class=" row">
+            <div class=" col-md-4">
+                <span class="title_admin">ID: </span>
+                <span>@Model.Id</span>
+            </div>
+            <div class=" col-md-8">
+                <span class="title_admin">Title: </span>
+                <span>@Model.Title</span>
+            </div>
+        </div>
+        <br />
+
+        <!--Content-->
+        <div class=" d-flex">
+            <span class="title_admin me-3">Content: </span>
+            <span>@Model.Content</span>
+        </div>
+        <br />
+
+        <!--Create-->
+        <div class=" d-flex">
+            <span class="title_admin  me-3">Create: </span>
+            <span>@Model.CreateAt</span>
+        </div>
+        <br />
+
+        <!--Update-->
+        <div class=" d-flex">
+            <span class="title_admin me-3">Update: </span>
+            <span>@Model.UpdateAt</span>
+        </div>
+        <br />
+
+    </div>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new {  id = Model.Id  }) |
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="categoryAdmin" asp-action="Edit" asp-route-id="@Model.Id"
+       class="btn btn-primary">
+        <span class="mx-3">
+            Edit
+        </span>
+    </a>
+    <br />
+    <br />
+    <a asp-action="Index" class="btn btn-link">Back to List</a>
 </div>
+

@@ -52,11 +52,11 @@ namespace ShopManager.Areas.Admin.Controllers
                     IsInserted = categoryAdminDAL.AddNew(categoryNew);
                     if (IsInserted)
                     {
-                        TempData["SuccessMessage"] = "Insert Success";
+                        TempData["SuccessMessage"] = "Create Category Success";
                     }
                     else
                     {
-                        TempData["ErrorMessage"] = "Insert Fail";
+                        TempData["ErrorMessage"] = "Create Category Fail";
                     }
                 }
                 return RedirectToAction(nameof(Index));
@@ -96,12 +96,12 @@ namespace ShopManager.Areas.Admin.Controllers
                     if (IsInserted)
                     {
                         Console.WriteLine("Update Success");
-                        TempData["SuccessMessage"] = "Insert Success";
+                        TempData["SuccessMessage"] = "Update Category Success";
                     }
                     else
                     {
                         Console.WriteLine("Update Fail");
-                        TempData["ErrorMessage"] = "Insert Fail";
+                        TempData["ErrorMessage"] = "Update Category Fail";
                     }
                 }
                 return RedirectToAction(nameof(Index));

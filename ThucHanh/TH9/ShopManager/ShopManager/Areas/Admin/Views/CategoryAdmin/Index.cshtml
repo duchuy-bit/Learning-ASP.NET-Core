@@ -4,28 +4,49 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<!-- Alert Success Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["SuccessMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-success alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Success!</strong> @TempData["SuccessMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Success End -->
+<!-- Alert Error Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-danger alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Error!</strong> @TempData["ErrorMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Error End -->
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<!-- Header-->
+<div class="d-flex justify-content-between align-items-center">
+    <h1>Category</h1>
+    <a class="btn btn-primary" asp-action="Create">Create New</a>
+</div>
+
+<!-- Table-->
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                #ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                Title
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdateAt)
+                Content
             </th>
             <th></th>
         </tr>
@@ -41,23 +62,55 @@
                     @Html.DisplayFor(modelItem => item.Title)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Content)
+                    <span class="three_lines">
+                        @item.Content
+                    </span>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreateAt)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdateAt)
-                </td>
-                <td>
-@*                     @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ }) *@
-                    @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
-                    @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
-                    @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
+                    <div class="d-flex align-items-center">
+                        <a asp-controller="categoryAdmin" asp-action="Edit" asp-route-id="@item.Id" class="btn me-1">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a asp-controller="categoryAdmin" asp-action="Details" asp-route-id="@item.Id"
+                                   class="dropdown-item">
+                                    <i class="bi bi-eye"></i> Preview
+                                </a>
+                                <a asp-controller="categoryAdmin" asp-action="Delete" asp-route-id="@item.Id"
+                                   class="dropdown-item">
+                                    <i class="bi bi-trash"></i> Detele
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<style>
+    .three_lines {
+        line-height: 1.5rem;
+        height: 4.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+
+<script>
+    // ------------- Auto Close Alert ----------------
+    const alert_error = document.getElementById("alert_error")
+    window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+            $(this).remove();
+        });
+    }, 2000);
+</script>

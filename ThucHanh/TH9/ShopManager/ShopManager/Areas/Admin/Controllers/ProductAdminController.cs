@@ -15,11 +15,13 @@ namespace ShopManager.Areas.Admin.Controllers
         CategoryAdminDAL categoryDAL = new CategoryAdminDAL();
 
         // GET: ProductAdminController
-        // GET: ProductAdminController
-        public ActionResult Index(int page = 1, string searchString = "", string sortOrder = "")
+        public ActionResult Index(int? idCategory = null, int page = 1, string searchString = "", string sortOrder = "")
         {
             //Khai báo số lượng Row trong 1 trang
             int pageSize = 5;
+
+            // Lưu Id IdCategory
+            ViewData["IdCategory"] = idCategory;
 
             //Text hiển thị trong input sau khi tìm kiếm
             ViewData["CurrentFilter"] = searchString;
@@ -36,20 +38,24 @@ namespace ShopManager.Areas.Admin.Controllers
 
             // Lấy danh sách Product sau khi phân trang
             List<ProductAdmin> products = new List<ProductAdmin>();
-            products = productDAL.getProduct_Pagination(page, pageSize, searchString.Trim(), sortOrder);
+            products = productDAL.getProduct_Pagination_Category(idCategory, page, pageSize, searchString.Trim(), sortOrder);
 
             // Lấy số lượng Row sau khi truy vấn có thêm điều kiện (tìm kiếm)
-            int numRows = productDAL.getCountRow_Pagination(page, pageSize, searchString.Trim());
+            int numRows = productDAL.getCountRow_Pagination_Category(idCategory, page, pageSize, searchString.Trim());
 
             //Tính số lượng trang sẽ có (làm tròn lên, vd: 4.3 -> 5)
             double pageCount = (double)numRows / pageSize;
             int maxPage = (int)Math.Ceiling(pageCount);
 
+            //Lấy danh sách Category
+            List<CategoryAdmin> categories = new List<CategoryAdmin>();
+            categories = categoryDAL.getAll();
             //Tạo model để hiển thị
-            ProductAdminModel model = new ProductAdminModel();
+            ProductAdminModel_Category model = new ProductAdminModel_Category();
             model.ProductAdmins = products;
             model.CurrentPageIndex = page;
             model.PageCount = maxPage;
+            model.categories = categories;
 
             return View(model);
         }
@@ -108,7 +114,7 @@ namespace ShopManager.Areas.Admin.Controllers
                 //Upload Hinh
                 if (Img == null)
                 {
-                    productAddNew.Img = "";
+                    productAddNew.Img = "no-image.png";
                 }
                 else
                 {
@@ -129,14 +135,14 @@ namespace ShopManager.Areas.Admin.Controllers
                 {
                     // Truy vấn Thành công
                     Console.WriteLine("Insert Product Success");
-                    TempData["SuccessMessage"] = "Insert Success";
+                    TempData["SuccessMessage"] = "Create Product Success";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
                     // Truy vấn Thất bại
                     Console.WriteLine("Insert Product Fail");
-                    TempData["ErrorMessage"] = "Insert Fail";
+                    TempData["ErrorMessage"] = "Create Product Fail";
                     return View();
                 }
             }
@@ -218,14 +224,14 @@ namespace ShopManager.Areas.Admin.Controllers
                 {
                     // Truy vấn Thành công
                     Console.WriteLine("Update Product Success");
-                    TempData["SuccessMessage"] = "Update Success";
+                    TempData["SuccessMessage"] = "Update Product Success";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
                     // Truy vấn Thất bại
                     Console.WriteLine("Update Product Fail");
-                    TempData["ErrorMessage"] = "Update Fail";
+                    TempData["ErrorMessage"] = "Update Product Fail";
                     return View();
                 }
             }
@@ -242,7 +248,7 @@ namespace ShopManager.Areas.Admin.Controllers
             // Lấy Thông tin Product từ Id
             ProductAdmin product = new ProductAdmin();
             product = productDAL.GetProductById(id);
-            return View();
+            return View(product);
         }
 
         // POST: ProductAdminController/Delete/5
@@ -260,14 +266,14 @@ namespace ShopManager.Areas.Admin.Controllers
                 {
                     // Truy vấn Thành công
                     Console.WriteLine("Delete Product Success");
-                    TempData["SuccessMessage"] = "Update Success";
+                    TempData["SuccessMessage"] = "Delete Product Success";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
                     // Truy vấn Thất bại
                     Console.WriteLine("Delete Product Fail");
-                    TempData["ErrorMessage"] = "Update Fail";
+                    TempData["ErrorMessage"] = "Delete Product Fail";
                     return View();
                 }
             }

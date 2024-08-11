@@ -1,0 +1,134 @@
+﻿@model ShopManager.Areas.Admin.Models.CustomerAdmin
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h4>Delete Customer</h4>
+
+<!-- Alert Error Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-danger alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Error!</strong> @TempData["ErrorMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Error End -->
+
+<h3>Are you sure you want to delete this account?</h3>
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <!--Image-->
+                <div class="col-md-2 pt-2 ps-5">
+                    <div style="position:relative">
+                        <img src="~/images/khachhang/@Model.Img"
+                             id="image_preview"
+                             style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover" />
+                    </div>
+                </div>
+                <!--Detail-->
+                <div class="col-md-10">
+                    <!--ID-->
+                    <div>
+                        <div class="d-flex align-items-center">
+                            <label class="control-label me-2 title_admin" style="white-space: nowrap;">ID: </label>
+                            <label>@Model.Id</label>
+                        </div>
+                    </div>
+                    <!--Name-->
+                    <div class="row">
+                        <div class="col-md-4 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin" style="white-space: nowrap;">Last Name: </label>
+                            <label>@Model.LastName</label>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin" style="white-space: nowrap;">First Name: </label>
+                            <label>@Model.FirstName</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin">Email: </label>
+                            <label>@Model.Email</label>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin">Phone: </label>
+                            <label>@Model.Phone</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <div class="">
+                <label class="control-label title_admin me-2">Address: </label>
+                <label>@Model.Address</label>
+            </div>
+
+            <div class="row">
+                <!--Date Of Birth-->
+                <div class="col-md-4 d-flex align-items-center">
+                    <label class="control-label title_admin me-2 mt-1">Date Of Birth: </label>
+                    <label>@Model.DateOfBirth?.ToString("dd/MM/yyy")</label>
+                </div>
+
+                <!--Create At-->
+                <div class="col-md-4 d-flex align-items-center">
+                    <label class="control-label title_admin me-2 mt-1">Create At: </label>
+                    <label>@Model.RegisterAt.ToString("dd/MM/yyy HH:mm")</label>
+                </div>
+            </div>
+
+            <div class="row ">
+                <!--IsActive-->
+                <div class="col-md-4">
+                    <label class="control-label title_admin me-2">Account Status: </label>
+                    @if (Model.IsActive == 1)
+                    {
+                        <label>Active</label>
+                    }
+                    else
+                    {
+                        <label>InActive</label>
+                    }
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <label class="control-label title_admin me-2 mt-1">Update At: </label>
+                    <label>@Model.UpdateAt?.ToString("dd/MM/yyy HH:mm")</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <!--Role-->
+                <div class="col-md-4">
+                    <label class="control-label title_admin me-2">Role: </label>
+                    @if (Model.Role == 1)
+                    {
+                        <label>Admin</label>
+                    }
+                    else
+                    {
+                        <label>User</label>
+                    }
+                </div>
+            </div>
+            <br />
+
+        </div>
+    </div>
+
+    
+    <form asp-action="Delete">
+        <input type="submit" value="Delete" class="btn btn-danger" /> 
+        <br />
+        <br />
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

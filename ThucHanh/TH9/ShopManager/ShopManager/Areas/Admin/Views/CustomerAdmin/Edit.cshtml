@@ -1,0 +1,175 @@
+﻿@model ShopManager.Areas.Admin.Models.CustomerAdmin
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h3>Edit Customer</h3>
+
+<!-- Alert Error Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-danger alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Error!</strong> @TempData["ErrorMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Error End -->
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" asp-controller="customerAdmin" asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <!--Image-->
+                <div class="col-md-2 pt-2 ps-5">
+                    <div style="position:relative">
+                        <img src="~/images/khachhang/avatar-default.jpg"
+                             id="image_preview"
+                             style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover" />
+
+                        <input id="image_upload" type="file" name="avatarUpload"
+                               accept="image/png, image/gif, image/jpeg"
+                               class="inputImage" />
+
+                        <input type="hidden" asp-for="@Model.Img" />
+                    </div>
+                </div>
+                <!--Detail-->
+                <div class="col-md-10">
+                    <div class="row">
+                        <div class="col-md-7 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin" style="white-space: nowrap;">Last Name</label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger ms-1"></span>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin" style="white-space: nowrap;">First Name</label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger ms-1"></span>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-7 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin">Email</label>
+                            <input type="email" asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger ms-1"></span>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center">
+                            <label class="control-label me-2 title_admin">Phone</label>
+                            <input asp-for="Phone" type="number" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger ms-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <div class="form-group">
+                <label class="control-label title_admin">Address</label>
+                <span asp-validation-for="Address" class="text-danger ms-1"></span>
+                <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row ">
+                <!--IsActive-->
+                <div class="col-md-4">
+                    <label class="control-label title_admin">Account Status</label>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+                    <div class="d-flex">
+                        <!--Acive-->
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" value="1" asp-for="IsActive"
+                                   checked>
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                Active
+                            </label>
+                        </div>
+                        <!--InActive-->
+                        <div class="form-check ms-5">
+                            <input class="form-check-input" type="radio" value="0" asp-for="IsActive">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                InActive
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!--Date Of Birth-->
+                <div class="col-md-8 d-flex align-items-center">
+                    <label class="control-label title_admin me-2 mt-1">Date Of Birth</label>
+                    <input asp-for="DateOfBirth" type="date"
+                           value="@Model.DateOfBirth?.ToString("yyyy-MM-dd")"
+                           class="form-control"
+                           style="width: 150px" />
+                </div>
+            </div>
+            <br />
+
+            <div class="row">
+                <!--Role-->
+                <div class="col-md-4">
+                    <label class="control-label title_admin">Role</label>
+                    <select asp-for="Role" class="form-select" style="width: 150px">
+                        <option value="0" selected>User</option>
+                        <option value="1">Admin</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    <span class="mx-3">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script>
+    // --------- Image Upload  ---------------
+    const imageUpload = document.getElementById("image_upload");
+    const imagePreview = document.getElementById("image_preview");
+
+    imageUpload.addEventListener("change", (event) => {
+        const files = event.target.files;
+        const [file] = event.target.files;
+        console.log("files", file);
+
+        imagePreview.src = URL.createObjectURL(event.target.files[0]);
+        imagePreview.onload = function () {
+            URL.revokeObjectURL(output.src); // free memory
+        };
+    });
+</script>
+
+<style>
+    .inputImage {
+        position: absolute;
+        z-index: 100;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0
+    }
+</style>
+

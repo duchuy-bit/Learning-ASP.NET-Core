@@ -133,11 +133,7 @@
                             <div class="col-6">
                                 <a href="#" class="h8">@item.Title</a>
                                 <div class="d-flex my-3">
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star"></i>
+                                    @await Component.InvokeAsync("StarRating", new { star = item.Rate })
                                 </div>
                                 <h7 class="mb-3">@item.Price.ToString("#,##0 VND")</h7>
                                 <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Giỏ hàng</a>

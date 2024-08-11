@@ -61,11 +61,7 @@
                         <!-- Text End -->
                         <!-- Rating Start -->
                         <div class="d-flex mb-4">
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star"></i>
+                            @await Component.InvokeAsync("StarRating", new { star = Model.Rate })
                         </div>
                         <!-- Rating End -->
 

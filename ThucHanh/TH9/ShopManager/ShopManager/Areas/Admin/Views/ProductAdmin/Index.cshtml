@@ -1,33 +1,97 @@
 ﻿@* @model IEnumerable<ShopManager.Areas.Admin.Models.ProductAdmin> *@
-@model ShopManager.Areas.Admin.Models.ProductAdminModel
+@model ShopManager.Areas.Admin.Models.ProductAdminModel_Category
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Product</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-<form asp-action="index" method="get">
-    <div class="form-actions no-color">
-        <p>
-            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="submit" value="Search" class="btn btn-primary" /> |
-            <a asp-action="index" class="btn btn-outline-dark">Back to Full List</a>
-        </p>
+<!-- Alert Success Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["SuccessMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-success alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Success!</strong> @TempData["SuccessMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
-</form>
+}
+<!-- Alert Success End -->
+<!-- Alert Error Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-danger alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Error!</strong> @TempData["ErrorMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Error End -->
+
+<div class="d-flex justify-content-between align-items-center">
+    <!-- Form Filter-->
+    <div>
+
+        <div class="d-flex align-items-center">
+            <!-- Filter by Category-->
+            <div class="dropdown">
+                <button class="btn  dropdown-toggle align-items-start" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        style="border: 1px solid grey; width: 180px">
+                    Filter by Categories
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <!-- All -->
+                    <a class="dropdown-item"
+                       asp-area="Admin" asp-controller="ProductAdmin"
+                       asp-action="Index" asp-route-idCategory="">All</a>
+                    <!-- Filter with Category-->
+                    @foreach (var categoryItem in Model.categories)
+                    {
+                        <a class="dropdown-item"
+                           asp-area="Admin" asp-controller="ProductAdmin"
+                           asp-action="Index" asp-route-idCategory="@categoryItem.Id">@categoryItem.Title</a>
+                    }
+                </div>
+            </div>
+
+            <!-- Search-->
+            <form asp-area="Admin" asp-controller="ProductAdmin" asp-action="index" asp-route-idCategory="@ViewData["IdCategory"]">
+                <div class="d-flex align-items-center ms-4"
+                     style="height: 40px;  border-radius:5px; border: 1px solid grey; overflow:hidden">
+                    <input type="text" id="text_search_productAdmin" name="SearchString" placeholder="Search by key" value="@ViewData["CurrentFilter"]"
+                           style="height: 36px; width: 300px; border:none; padding: 10px;" />
+                    <a id="clear_search_productAdmin" asp-action="index" style="visibility :hidden; padding: 4px 10px 4px 10px; ">
+                        <i class="bi bi-x-lg" style="color:black"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Button Create New-->
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </p>
+</div>
+
+
 
 <table class="table">
     <thead>
         <tr>
             <th style="width:50px">
                 <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-idCategory="@ViewData["IdCategory"]"
                    asp-route-searchString="@ViewData["CurrentFilter"]"
-                   asp-route-sortOrder="@ViewData["IdSortParm"]">
-                    Id
+                   asp-route-sortOrder="@ViewData["IdSortParm"]"
+                   class="d-flex">
+                    #ID
                     @if (ViewData["SortColumn"]!.ToString() == "")
                     {
                         <span>&darr;</span>
@@ -42,8 +106,9 @@
             </th>
             <th>
                 <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-idCategory="@ViewData["IdCategory"]"
                    asp-route-searchString="@ViewData["CurrentFilter"]"
-                   asp-route-sortOrder="@ViewData["TitleSortParm"]">
+                   asp-route-sortOrder="@ViewData["TitleSortParm"]" class="d-flex">
                     Title
                     @if (ViewData["SortColumn"]!.ToString() == "title")
                     {
@@ -63,8 +128,9 @@
             </th>
             <th>
                 <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-idCategory="@ViewData["IdCategory"]"
                    asp-route-searchString="@ViewData["CurrentFilter"]"
-                   asp-route-sortOrder="@ViewData["PriceSortParm"]">
+                   asp-route-sortOrder="@ViewData["PriceSortParm"]" class="d-flex">
                     Price
                     @if (ViewData["SortColumn"]!.ToString() == "price")
                     {
@@ -78,9 +144,10 @@
             </th>
             <th style="width:70px">
                 <a asp-controller="ProductAdmin" asp-action="Index"
+                   asp-route-idCategory="@ViewData["IdCategory"]"
                    asp-route-searchString="@ViewData["CurrentFilter"]"
-                   asp-route-sortOrder="@ViewData["RateSortParm"]">
-                    Rate
+                   asp-route-sortOrder="@ViewData["RateSortParm"]" class="d-flex">
+                    Rating
                     @if (ViewData["SortColumn"]!.ToString() == "rate")
                     {
                         <span>&uarr;</span>
@@ -91,17 +158,9 @@
                     }
                 </a>
             </th>
+
             <th>
-                Create At
-            </th>
-            <th>
-                Update At
-            </th>
-            <th>
-                CategoryId
-            </th>
-            <th>
-                CategoryTitle
+                Category
             </th>
             <th></th>
         </tr>
@@ -131,21 +190,30 @@
                     @Html.DisplayFor(modelItem => item.Rate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreateAt)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdateAt)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CategoryId)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.CategoryTitle)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
-                    @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
-                    @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
+                    <div class="d-flex align-items-center">
+                        <a asp-controller="productAdmin" asp-action="Edit" asp-route-id="@item.Id" class="btn me-1">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a asp-controller="productAdmin" asp-action="Details" asp-route-id="@item.Id"
+                                   class="dropdown-item">
+                                    <i class="bi bi-eye"></i> Preview
+                                </a>
+                                <a asp-controller="productAdmin" asp-action="Delete" asp-route-id="@item.Id" 
+                                class="dropdown-item" >
+                                    <i class="bi bi-trash"></i> Detele
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
@@ -161,6 +229,7 @@
         @if (Model.CurrentPageIndex > 1)
         {
             <a asp-controller="ProductAdmin" asp-action="index"
+               asp-route-idCategory="@ViewData["IdCategory"]"
                asp-route-page="@(Model.CurrentPageIndex -1)"
                asp-route-searchString="@ViewData["CurrentFilter"]"
                asp-route-sortOrder="@ViewData["SortColumn"]"
@@ -174,6 +243,7 @@
             @if (i != Model.CurrentPageIndex)
             {
                 <a asp-controller="ProductAdmin" asp-action="index"
+                   asp-route-idCategory="@ViewData["IdCategory"]"
                    asp-route-page="@i"
                    asp-route-searchString="@ViewData["CurrentFilter"]"
                    asp-route-sortOrder="@ViewData["SortColumn"]"
@@ -191,6 +261,7 @@
         @if (Model.PageCount != Model.CurrentPageIndex)
         {
             <a asp-controller="ProductAdmin" asp-action="index"
+               asp-route-idCategory="@ViewData["IdCategory"]"
                asp-route-page="@(Model.CurrentPageIndex + 1)"
                asp-route-searchString="@ViewData["CurrentFilter"]"
                asp-route-sortOrder="@ViewData["SortColumn"]"
@@ -201,3 +272,56 @@
     </div>
 </div>
 <!-- Pagination End-->
+@{
+    string textButtonFilter = "Filter by Categories";
+
+    @foreach (var categoryItem in Model.categories)
+    {
+        if (categoryItem.Id == Convert.ToInt16(@ViewData["IdCategory"]))
+        {
+            textButtonFilter = categoryItem.Title;
+        }
+        else
+        {
+            // Console.WriteLine(categoryItem.Id + "  " + Convert.ToInt16(@ViewData["IdCategory"]));
+        }
+    }
+}
+
+<script>
+    var textButton = "@Html.Raw(textButtonFilter)";
+
+    document.getElementById("dropdownMenuButton").innerText = textButton;
+
+    // ============Show/Hidden button clear text Search =================
+    const textSearch = document.getElementById('text_search_productAdmin');
+    const btnClear = document.getElementById('clear_search_productAdmin');
+
+    textSearch.addEventListener('input', function (e) {
+        const text = e.target.value;
+        if (text.trim() == "") {
+            btnClear.style.visibility = "inline";
+        } else {
+            btnClear.style.visibility = "visible";
+        }
+    });
+
+    // ------------- Auto Close Alert ----------------
+    const alert_error = document.getElementById("alert_error")
+    window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+            $(this).remove();
+        });
+    }, 2000);
+</script>
+
+<style>
+    input:focus{
+        border: 0px solid white;
+        /* background-color:pink */
+    }
+
+    *, ::after, ::before {
+        box-sizing: unset;
+    }
+</style>
