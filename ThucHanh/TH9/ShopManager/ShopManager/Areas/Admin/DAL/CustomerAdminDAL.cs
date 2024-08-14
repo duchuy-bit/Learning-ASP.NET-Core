@@ -28,7 +28,7 @@ namespace ShopManager.Areas.Admin.DAL
 
                 while (reader.Read())
                 {
-                    CustomerAdmin category = new CustomerAdmin()
+                    CustomerAdmin customer = new CustomerAdmin()
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         LastName = reader["Lastname"].ToString() ?? "",
@@ -46,7 +46,7 @@ namespace ShopManager.Areas.Admin.DAL
                         Role = Convert.ToInt32(reader["Role"]),
                     };
 
-                    list.Add(category);
+                    list.Add(customer);
                 }
             }
             connect.closeConnection();

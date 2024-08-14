@@ -20,20 +20,59 @@ namespace ShopManager.ViewComponents
 
             listMenu = menuDAL.GetAllMenu();
 
+            // Sử dụng danh sách tạm thời để lưu các mục cần xóa
+            var itemsToRemove = new List<MenuItem>();
+
+            // Nếu không được phân quyền để truy cập trang Admin
+            // Và đường dẫn Url của Menu chứa Area Admin
             foreach (var item in listMenu)
             {
-                //Nếu Không được phân quyền để truy cập trang Admin
-                // Và đường dẫn Url của Menu chứa Area Admin
-                if (RoleCustomer != "Administrator" && item.MenuUrl != null && item.MenuUrl.Contains("Admin"))
+                if ((RoleCustomer != "Administrator" && item.MenuUrl != null && item.MenuUrl.Contains("Admin")) || !item.isVisible)
                 {
-                    //Bỏ qua Menu này
+                    itemsToRemove.Add(item);
                 }
-                else
+            }
+
+            // Xóa các phần tử không hợp lệ
+            foreach (var item in itemsToRemove)
+            {
+                listMenu.Remove(item);
+            }
+
+            //Lấy Tất cả Menu
+            foreach (var item in listMenu)
+            {
+                // Is Nav Bar Item
+                if (item.ParentId == null)
                 {
-                    // Is Nav Bar Item
-                    if (item.ParentId == null)
+                    navBar.Add(
+                        new NavbarItem()
+                        {
+                            Id = item.Id,
+                            ParentId = item.ParentId,
+                            Title = item.Title,
+                            MenuUrl = item.MenuUrl,
+                            MenuIndex = item.MenuIndex,
+                            isVisible = item.isVisible,
+                            subItems = new List<NavbarItem>(),
+                        }
+                    );
+                }
+            }
+            //Laays menu Con
+            foreach (var item in listMenu)
+            {
+                // Is Nav Bar Item
+                if (item.ParentId != null)
+                {
+                    //Find Item Parent
+                    var navbarParent = navBar.Find(p => p.Id == item.ParentId);
+
+                    // if HasValue
+                    if (navbarParent != null)
                     {
-                        navBar.Add(
+                        // Add to List Dropdown Item
+                        navbarParent.subItems!.Add(
                             new NavbarItem()
                             {
                                 Id = item.Id,
@@ -42,33 +81,9 @@ namespace ShopManager.ViewComponents
                                 MenuUrl = item.MenuUrl,
                                 MenuIndex = item.MenuIndex,
                                 isVisible = item.isVisible,
-                                subItems = new List<NavbarItem>(),
+                                subItems = null
                             }
                         );
-                    }
-                    //Is Dropdown Item
-                    else
-                    {
-                        //Find Item Parent
-                        var navbarParent = navBar.Find(p => p.Id == item.ParentId);
-
-                        // if HasValue
-                        if (navbarParent != null)
-                        {
-                            // Add to List Dropdown Item
-                            navbarParent.subItems!.Add(
-                                new NavbarItem()
-                                {
-                                    Id = item.Id,
-                                    ParentId = item.ParentId,
-                                    Title = item.Title,
-                                    MenuUrl = item.MenuUrl,
-                                    MenuIndex = item.MenuIndex,
-                                    isVisible = item.isVisible,
-                                    subItems = null
-                                }
-                            );
-                        }
                     }
                 }
             }

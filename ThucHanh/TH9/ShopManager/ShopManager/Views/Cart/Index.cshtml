@@ -7,7 +7,7 @@
 <!-- Single Page Header End -->
 <!-- Cart Page Start -->
 <div class="container-fluid py-5">
-    <form asp-controller="Cart" asp-action="CheckOut">
+    
         <div class="container py-5">
             <!-- Alert Success Start -->
             @if (!string.IsNullOrWhiteSpace(TempData["CheckOutSuccessMessage"]?.ToString()))
@@ -100,6 +100,7 @@
                 </table>
             </div>
             <div class="row g-4 justify-content-end">
+                <form asp-controller="Cart" asp-action="CheckOut">
                 <div class="col-8"></div>
                 <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
                     <div class="bg-light rounded">
@@ -110,9 +111,9 @@
                         <button  type="submit" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" >Thanh toán</button>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
-    </form>
 </div>
 <!-- Cart Page End -->
 <script>

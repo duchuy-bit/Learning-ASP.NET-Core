@@ -1,0 +1,134 @@
+﻿@model ShopManager.Areas.Admin.Models.PaymentAdmin_PaymentDetail
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Payment Details</h1>
+<br />
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <!--Image-->
+            <div class="col-md-2 pt-2 ps-5">
+                <div style="position:relative">
+                    <img src="~/images/khachhang/@Model.Avatar"
+                         id="image_preview"
+                         style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover" />
+                </div>
+            </div>
+            <!--Detail-->
+            <div class="col-md-10">
+                <!--ID-->
+                <div>
+                    <div class="d-flex align-items-center">
+                        <label class="control-label me-2 title_admin" style="white-space: nowrap;">ID: </label>
+                        <label>@Model.Id</label>
+                    </div>
+                </div>
+                <!--Name-->
+                <div class="row">
+                    <div class="col-md-4 d-flex align-items-center">
+                        <label class="control-label me-2 title_admin" style="white-space: nowrap;">Last Name: </label>
+                        <label>@Model.LastName</label>
+                    </div>
+                    <div class="col-md-5 d-flex align-items-center">
+                        <label class="control-label me-2 title_admin" style="white-space: nowrap;">First Name: </label>
+                        <label>@Model.FirstName</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 d-flex align-items-center">
+                        <label class="control-label me-2 title_admin">Email: </label>
+                        <label>@Model.Email</label>
+                    </div>
+                    <div class="col-md-5 d-flex align-items-center">
+                        <label class="control-label me-2 title_admin">Phone: </label>
+                        <label>@Model.Phone</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 d-flex align-items-center">
+                        <label class="control-label me-2 title_admin">Create At: </label>
+                        <label>@Model.CreateAt</label>
+                    </div>
+                    <div class="col-md-5 d-flex align-items-center">
+                        <label class="control-label me-2 title_admin">Total Payment: </label>
+                        <label>@Model.Total.ToString("#,##0 VND")</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+</div>
+
+<!-- table-->
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <span style="white-space:nowrap">#Product ID</span>
+                </th>
+                <th>
+                    <span style="white-space:nowrap">Image</span>
+                </th>
+                <th>
+                    <span style="white-space:nowrap">Name</span>
+                </th>
+                <th>
+                    <span style="white-space:nowrap">Price</span>
+                </th>
+                <th>
+                    <span style="white-space:nowrap">Quantity</span>
+                </th>
+                <th>
+                    <span style="white-space:nowrap">Total</span>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.PaymentDetailAdmins)
+            {
+                <tr>
+                    <td>
+                        <span style="white-space:nowrap">@item.ProductId</span>
+                    </td>
+                    <td>
+                        <img src="~/images/SanPham/@item.Img"
+                             style="width: 100px; height: 60px; object-fit: cover; border-radius: 10px" />
+                    </td>
+                    <td>
+                        <span style="white-space:nowrap">@item.TitleProduct</span>
+                    </td>
+                    <td>
+                        <span style="white-space:nowrap">@item.Price.ToString("#,##0 VND")</span>
+                    </td>
+                    <td>
+                        <span style="white-space:nowrap">@item.Quantity</span>
+                    </td>
+                    <td>
+                        <span style="white-space:nowrap">@item.TotalDetail.ToString("#,##0 VND")</span>
+                    </td>
+                    <td>
+                        <a asp-controller="productAdmin" asp-action="Details" asp-route-id="@item.ProductId" class="dropdown-item">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a class="btn btn-primary" asp-action="Index">Back to List</a>
+

@@ -1,77 +1,274 @@
-﻿@model IEnumerable<ShopManager.Areas.Admin.Models.PaymentAdmin>
+﻿@model ShopManager.Areas.Admin.Models.PaymentAdmin_Pagination
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h4>Payments</h4>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<!-- Alert Error Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-danger alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Error!</strong> @TempData["ErrorMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Error End -->
+<!--Form Filter-->
+<div class="d-flex align-items-center justify-content-start mb-2">
+    <!-- Search-->
+    <form asp-area="Admin" asp-controller="PaymentAdmin" asp-action="index" >
+        <div class="d-flex align-items-center ms-4"
+             style="height: 40px;  border-radius:5px; border: 1px solid grey; overflow:hidden">
+            <!--Input-->
+            <input type="text" id="text_search_paymentAdmin" name="search" placeholder="Search by key" value="@ViewData["CurrentSearch"]"
+                   style="height: 36px; width: 300px; border:none; padding: 10px;" />
+
+            <!-- Icon Clear text-->
+            <a id="clear_search_paymentAdmin" asp-action="index" style="visibility:hidden; padding: 4px 10px 4px 10px; ">
+                <i class="bi bi-x-lg" style="color:black"></i>
+            </a>
+
+            <!-- Icon kính lúp-->
+            <button type="submit" style="display:flex; align-items:center; padding: 0px 15px;height:40px; border:none; border-left: 1px solid grey; background-color:#eee">
+                <i class="bi bi-search" style="font-size:20px"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                <a asp-asp-controller="PaymentAdmin" asp-action="index"
+                   asp-route-search="@ViewData["CurrentSearch"]"
+                   asp-route-sortOrder="@ViewData["IdSortParm"]" style="white-space:nowrap">
+                    #ID
+                    @if (ViewData["SortColumn"]!.ToString() == "")
+                    {
+                        <span>&darr;</span>
+                        // mũi tên đi xuống
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "id_desc")
+                    {
+                        <span>&uarr;</span>
+                        // mũi tên đi lên
+                    }
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustomerId)
+                <a asp-asp-controller="PaymentAdmin" asp-action="index"
+                   asp-route-search="@ViewData["CurrentSearch"]"
+                   asp-route-sortOrder="@ViewData["FirstNameSortParm"]" style="white-space:nowrap">
+                    First Name
+                    @if (ViewData["SortColumn"]!.ToString() == "firstName")
+                    {
+                        <span>&darr;</span>
+                        // mũi tên đi xuống
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "firstName_desc")
+                    {
+                        <span>&uarr;</span>
+                        // mũi tên đi lên
+                    }
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                <a asp-asp-controller="PaymentAdmin" asp-action="index"
+                   asp-route-search="@ViewData["CurrentSearch"]"
+                   asp-route-sortOrder="@ViewData["LastNameSortParm"]" style="white-space:nowrap">
+                    Last Name
+                    @if (ViewData["SortColumn"]!.ToString() == "lastName")
+                    {
+                        <span>&darr;</span>
+                        // mũi tên đi xuống
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "lastName_desc")
+                    {
+                        <span>&uarr;</span>
+                        // mũi tên đi lên
+                    }
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                Phone
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Phone)
+                Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                <a asp-asp-controller="PaymentAdmin" asp-action="index"
+                   asp-route-search="@ViewData["CurrentSearch"]"
+                   asp-route-sortOrder="@ViewData["CreateAtSortParm"]" style="white-space:nowrap">
+                    Create At
+                    @if (ViewData["SortColumn"]!.ToString() == "createAt")
+                    {
+                        <span>&darr;</span>
+                        // mũi tên đi xuống
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "createAt_desc")
+                    {
+                        <span>&uarr;</span>
+                        // mũi tên đi lên
+                    }
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreateAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Total)
+                <a asp-asp-controller="PaymentAdmin" asp-action="index"
+                   asp-route-search="@ViewData["CurrentSearch"]"
+                   asp-route-sortOrder="@ViewData["TotalSortParm"]" style="white-space:nowrap">
+                    Total
+                    @if (ViewData["SortColumn"]!.ToString() == "total")
+                    {
+                        <span>&darr;</span>
+                        // mũi tên đi xuống
+                    }
+                    @if (ViewData["SortColumn"]!.ToString() == "total_desc")
+                    {
+                        <span>&uarr;</span>
+                        // mũi tên đi lên
+                    }
+                </a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CustomerId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Total)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @if (Model.PaymentAdmins.Count() == 0)
+        {
+            <tr>
+                <td colspan="8">
+                    <div class="d-flex justify-content-center">
+                        Not Found 
+                    </div>
+                </td>
+            </tr>
+        }
+
+        @foreach (var item in Model.PaymentAdmins)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateAt)
+                </td>
+                <td>
+                    @item.Total.ToString("#,##0 VND")
+                </td>
+                <td>
+                    <a asp-controller="paymentAdmin" asp-action="Details" asp-route-id="@item.Id"
+                       class="dropdown-item">
+                        <i class="bi bi-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<!-- Pagination Start-->
+<div class="col-12">
+    <div class="pagination d-flex justify-content-center mt-5">
+        <!--Button Previous-->
+        @if (Model.CurrentPageIndex > 1)
+        {
+            <a asp-controller="PaymentAdmin" asp-action="index"
+               asp-route-page="@(Model.CurrentPageIndex -1)"
+               asp-route-search="@ViewData["CurrentSearch"]"
+               asp-route-sortOrder="@ViewData["SortColumn"]"
+               class="btn btn-outline-dark mx-2">
+                &laquo;
+            </a>
+        }
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            @if (i != Model.CurrentPageIndex)
+            {
+                <a asp-controller="PaymentAdmin" asp-action="index"
+                   asp-route-page="@i"
+                   asp-route-search="@ViewData["CurrentSearch"]"
+                   asp-route-sortOrder="@ViewData["SortColumn"]"
+                   class="btn btn-outline-dark mx-2">
+                    @i
+                </a>
+            }
+            else
+            {
+                //Current Page
+                <a class="btn btn btn-outline-dark active mx-2">@i</a>
+            }
+        }
+        <!-- Button Next -->
+        @if (Model.PageCount > Model.CurrentPageIndex)
+        {
+            <a asp-controller="PaymentAdmin" asp-action="index"
+               asp-route-page="@(Model.CurrentPageIndex + 1)"
+               asp-route-search="@ViewData["CurrentSearch"]"
+               asp-route-sortOrder="@ViewData["SortColumn"]"
+               class="btn btn-outline-dark mx-2">
+                &raquo;
+            </a>
+        }
+    </div>
+</div>
+<!-- Pagination End-->
+
+<script>
+    // const htmlFilter = "textButtonFilter";
+
+    // document.getElementById("dropdown_filter_customer_admin").innerHTML = htmlFilter;
+
+    // ============Show/Hidden button clear text Search =================
+    const textSearch = document.getElementById('text_search_paymentAdmin');
+    const btnClear = document.getElementById('clear_search_paymentAdmin');
+
+    function handleClearTextButton() {
+        const text = textSearch.value;
+        if (text.trim() != "") {
+            btnClear.style.visibility = "visible";
+        } else {
+            btnClear.style.visibility = "hidden";
+        }
+    }
+
+    textSearch.addEventListener('input', handleClearTextButton);
+
+    window.onload = handleClearTextButton;
+
+</script>
+
+<style>
+    .text_in_one_line {
+        line-height: 1.5rem;
+        height: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    *, ::after, ::before {
+        box-sizing: unset;
+    }
+</style>

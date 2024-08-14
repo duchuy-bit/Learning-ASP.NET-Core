@@ -148,6 +148,11 @@ namespace ShopManager.Controllers
         {
             try
             {
+                if(Cart.Count() == 0)
+                {
+                    TempData["ErrorMessage"] = "System Error";
+                    return RedirectToAction("Index");
+                }
                 // Lấy Customer id nếu người dùng đã đăng nhập
                 string? idTam = null;
                 if (HttpContext.User.FindFirstValue("CustomerId") != null)

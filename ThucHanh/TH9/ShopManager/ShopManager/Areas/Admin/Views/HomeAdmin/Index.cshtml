@@ -1,98 +1,136 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
-}
-<style>
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 550px}
-    
-    /* Set gray background color and 100% height */
-    .sidenav {
-      background-color: #f1f1f1;
-      height: 100%;
+﻿@model ShopManager.Areas.Admin.Models.DashboardAdmin
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+<h4 class="mt-5">Dashboard</h4>
+<br />
+<br />
+
+<div class="d-flex align-items-center justify-content-between cart_container">
+    @foreach (var cardItem in Model.CardDashboards)
+    {
+        <a asp-controller="@cardItem.ControllerName" asp-action="Index"
+           class="card_container" style="background-color:@cardItem.Color">
+            <span class="span_detail">@cardItem.Count</span>
+            <span class="span_title">@cardItem.Title</span>
+        </a>
     }
-        
-  </style>
-
-<div class="container-fluid">
-    <div class="row content">
-        <div class="col-sm-3 sidenav hidden-xs">
-            <h2>Logo</h2>
-            <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="#section1">Dashboard</a></li>
-                <li><a href="#section2">Age</a></li>
-                <li><a href="#section3">Gender</a></li>
-                <li><a href="#section3">Geo</a></li>
-            </ul><br>
-        </div>
-        <br>
-
-        <div class="col-sm-9">
-            <div class="well">
-                <h4>Dashboard</h4>
-                <p>Some text..</p>
-            </div>
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="well">
-                        <h4>Users</h4>
-                        <p>1 Million</p>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="well">
-                        <h4>Pages</h4>
-                        <p>100 Million</p>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="well">
-                        <h4>Sessions</h4>
-                        <p>10 Million</p>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="well">
-                        <h4>Bounce</h4>
-                        <p>30%</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="well">
-                        <p>Text</p>
-                        <p>Text</p>
-                        <p>Text</p>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="well">
-                        <p>Text</p>
-                        <p>Text</p>
-                        <p>Text</p>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="well">
-                        <p>Text</p>
-                        <p>Text</p>
-                        <p>Text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="well">
-                        <p>Text</p>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="well">
-                        <p>Text</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+
+<br />
+<br />
+
+<h4>Revenue in @DateTime.Now.Year.ToString()</h4>
+<div class="w-100 d-flex justify-content-between align-items-center mt-5">
+    <canvas id="RevenueChart" style="width:100%;max-width:49%"></canvas>
+    <canvas id="PaymentChart" style="width:100%;max-width:49%"></canvas>
+</div>
+
+<div class="hint_container">
+    <div style="display:flex; flex-direction:row; align-items:center;margin-right: 60px">
+        <div class="hint_chart" style="background-color: green"></div>
+        <a class="ms-2">: Revenue</a>
+    </div>
+
+    <div style="display:flex; flex-direction:row; align-items:center; ">
+        <div class="hint_chart" style="background-color:blue"></div>
+        <a class="ms-2">: Payments</a>
+    </div>
+
+
+</div>
+
+
+<script>
+    const xValues = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    // RevenueChart ==================
+    new Chart("RevenueChart", {
+        type: "line",
+        data: {
+            labels: xValues,
+            datasets: [{
+                data: [@string.Join(",", Model.RevenueAdmins.Select(item => item.TotalRevenue)) ],
+                borderColor: "green",
+                fill: false
+            }]
+        },
+        options: {
+            legend: { display: false },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        callback: function (value, index, values) {
+                            return value.toLocaleString() + ' VND'; // Định dạng số và thêm đơn vị VND
+                        }
+                    }
+                }]
+            }
+        }
+    });
+
+
+    // PaymentChart ==================
+    new Chart("PaymentChart", {
+        type: "line",
+        data: {
+            labels: xValues,
+            datasets: [{
+                data: [@string.Join(",", Model.PaymentInMonths.Select(item => item.CountPayment)) ],
+                borderColor: "blue",
+                fill: false
+            },]
+        },
+        options: {
+            legend: { display: false }
+        }
+    });
+</script>
+
+
+
+<style>
+    .cart_container a{
+        transition: all 0.5s ease-in-out;
+    }
+
+    .cart_container a:hover {
+        text-decoration: none;
+        color:white;
+        cursor: pointer;
+
+        transform: scale(1.1);
+    }
+
+    .card_container {
+        width: 20%;
+        display: flex;
+        flex-direction: column;
+        color: white;
+        padding: 20px 20px;
+        border-radius: 15px
+    }
+
+    .span_detail {
+        font-size: 30px;
+        font-weight: bold
+    }
+
+    .span_title {
+        font-size: 16px
+    }
+
+    .hint_chart {
+        height: 4px;
+        width: 55px;
+        border-radius: 2px
+    }
+
+    .hint_container {
+        display: flex;
+        position: relative;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center
+    }
+</style>

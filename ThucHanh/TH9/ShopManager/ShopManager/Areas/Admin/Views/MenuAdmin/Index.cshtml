@@ -4,62 +4,101 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParentId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MenuUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MenuIndex)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsVisible)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParentId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MenuUrl)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MenuIndex)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsVisible)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
+<!-- Alert Success Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["SuccessMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-success alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Success!</strong> @TempData["SuccessMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+<!-- Alert Success End -->
+<!-- Alert Error Start -->
+@if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"]?.ToString()))
+{
+    <div class="w-100 d-flex justify-content-end">
+        <div class="alert alert-danger alert-dismissible fade show w-50 r-0" role="alert" id="alert_error">
+            <strong>Error!</strong> @TempData["ErrorMessage"]?.ToString()
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+<!-- Alert Error End -->
+
+<div id="index_menu_admin">
+    <h1>Index</h1>
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+
+    <div id="menuTableContainer">
+        @await Html.PartialAsync("_MenuTable", Model)
+    </div>
+</div>
+<div>
+    <script>
+        // ================== Click Checkbox ================================
+        function handleClickCheckBox(checkbox, idMenu) {
+
+            const valueCheckBox = checkbox.checked; //True - False
+
+            console.log(idMenu, "   ", valueCheckBox)
+
+            $.ajax({
+                url: '@Url.Action("UpdateVisible", "MenuAdmin")',
+                method: "POST",
+                data: { idMenu: idMenu, value: valueCheckBox },
+                success: function (data) {
+                    console.log("Success");
+                    $('#menuTableContainer').load('@Url.Action("Index") #menuTableContainer');
+                    // console.log(data);
+                    //call is successfully completed and we got result in data
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    //some errror, some show err msg to user and log the error
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        //========================== Click Move Menu ====================
+        function handleMoveMenu(idMenu, isMoveUp){
+            console.log("Move Menu: ", idMenu, "   is Up: ", isMoveUp);
+            $.ajax({
+                url: '@Url.Action("UpdateMenuIndex", "MenuAdmin")',
+                method: "POST",
+                data: { idMenu: idMenu, isMoveUp: isMoveUp },
+                success: function (data) {
+                    console.log("Success");
+                    $('#menuTableContainer').load('@Url.Action("Index") #menuTableContainer');
+                    // console.log(data);
+                    //call is successfully completed and we got result in data
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    //some errror, some show err msg to user and log the error
+                    alert(xhr.responseText);
+                }
+            });
+        }
+    </script>
+</div>
+
+
+<style>
+    .opacity_1 {
+        opacity: 1;
+    }
+
+    .opacity_0_5 {
+        opacity: 0.5;
+    }
+
+    .is_parent_row {
+        background-color: antiquewhite;
+    }
+</style>

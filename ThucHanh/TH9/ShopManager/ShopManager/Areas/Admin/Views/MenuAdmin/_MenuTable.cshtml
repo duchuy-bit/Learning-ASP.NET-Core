@@ -1,0 +1,128 @@
+﻿@model IEnumerable<ShopManager.Areas.Admin.Models.MenuAdmin>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.MenuUrl)</th>
+            <th>@Html.DisplayNameFor(model => model.MenuIndex)</th>
+            <th>@Html.DisplayNameFor(model => model.IsVisible)</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var classParent = item.SubItems?.Count() != 0 ? "is_parent_row" : "";
+            var classVisible = item.IsVisible == true ? "opacity_1" : "opacity_0_5";
+            <tr class="@classParent @classVisible">
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.MenuUrl)</td>
+                <td>@Html.DisplayFor(modelItem => item.MenuIndex)</td>
+                <td>
+                    <input type="checkbox" @(item.IsVisible ? "checked='checked'" : "")
+                           onchange="handleClickCheckBox(this, @item.Id);" />
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <!--Icon Up-->
+                        <div onclick="handleMoveMenu(@item.Id, true)">
+                            <i class="bi bi-arrow-up" style="color:blue; font-size:18px"></i>
+                        </div>
+
+                        <!--Icon Down-->
+                        <div onclick="handleMoveMenu(@item.Id, false)">
+                            <i class="bi bi-arrow-down" style="color:orangered;font-size:18px;margin:0px 16px"></i>
+                        </div>
+
+                        <!--Dropdown-->
+                        <div class="dropdown">
+                            <a class="btn dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a asp-controller="menuAdmin" asp-action="CreateSubMenu" asp-route-parentId="@item.Id" class="dropdown-item">
+                                    <i class="bi bi-plus-lg"></i> Create SubItem
+                                </a>
+
+                                <a asp-controller="menuAdmin" asp-action="Details" asp-route-id="@item.Id" class="dropdown-item">
+                                    <i class="bi bi-eye"></i> Preview
+                                </a>
+                                <a asp-controller="menuAdmin" asp-action="Edit" asp-route-id="@item.Id" class="dropdown-item">
+                                    <i class="bi bi-pencil-fill"></i> Edit
+                                </a>
+                                <a asp-controller="menuAdmin" asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            @if (item.SubItems?.Count() != 0)
+            {
+                <tr class="@classVisible" style="background-color:#eee">
+                    <th></th>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>MenuURL</th>
+                    <th>Menu Index</th>
+                    <th>IsVisible</th>
+                    <th></th>
+                </tr>
+
+                @foreach (var subItem in item.SubItems!)
+                {
+                    var classVisibleSubItem = subItem.IsVisible == true ? "opacity_1" : "opacity_0_5";
+                    <tr class="@classVisibleSubItem @classVisible " style="background-color:#eee">
+                        <td></td>
+                        <td>@Html.DisplayFor(modelItem => subItem.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => subItem.Title)</td>
+                        <td>@Html.DisplayFor(modelItem => subItem.MenuUrl)</td>
+                        <td>@Html.DisplayFor(modelItem => subItem.MenuIndex)</td>
+                        <td>
+                            <input type="checkbox" @(subItem.IsVisible ? "checked='checked'" : "")
+                                   onchange="handleClickCheckBox(this, @subItem.Id);" />
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <!--Icon Up-->
+                                <div onclick="handleMoveMenu(@subItem.Id, true)">
+                                    <i class="bi bi-arrow-up" style="color:blue; font-size:18px"></i>
+                                </div>
+
+                                <!--Icon Down-->
+                                <div onclick="handleMoveMenu(@subItem.Id, false)">
+                                    <i class="bi bi-arrow-down" style="color:orangered;font-size:18px;margin:0px 16px"></i>
+                                </div>
+
+                                <!--Dropdown-->
+                                <div class="dropdown">
+                                    <a class="btn dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a asp-controller="menuAdmin" asp-action="Details" asp-route-id="@subItem.Id" class="dropdown-item">
+                                            <i class="bi bi-eye"></i> Preview
+                                        </a>
+                                        <a asp-controller="menuAdmin" asp-action="Edit" asp-route-id="@subItem.Id" class="dropdown-item">
+                                            <i class="bi bi-pencil-fill"></i> Edit
+                                        </a>
+                                        <a asp-controller="menuAdmin" asp-action="Delete" asp-route-id="@subItem.Id" class="dropdown-item">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>

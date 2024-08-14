@@ -147,6 +147,13 @@ namespace ShopManager.Controllers
         {
             try
             {
+                //Không thanh toán khi không có sản phẩm trong giỏ hàng
+                if (Cart.Count() == 0)
+                {
+                    TempData["CheckOutErrorMessage"] = "Thanh toán thất bại";
+                    return RedirectToAction("Index");
+                }
+
                 // Lấy Customer id nếu người dùng đã đăng nhập
                 string? idTam = null;
                 if (HttpContext.User.FindFirstValue("CustomerId") != null)

@@ -12,99 +12,99 @@
 <!-- Single Page Header End -->
 <!-- Cart Page Start -->
 <div class="container-fluid py-5">
-    <form asp-controller="Cart" asp-action="CheckOut">
-        <div class="container py-5">
-            <!-- Alert Success Start -->
-            @if (!string.IsNullOrWhiteSpace(TempData["CheckOutSuccessMessage"]?.ToString()))
-            {
-                <div class="w-100 d-flex justify-content-end">
-                    <div class="alert alert-success alert-dismissible fade show r-0 mr-5" role="alert" id="alert_message" style="width:40%">
-                        <strong>Success!</strong> @TempData["CheckOutSuccessMessage"]?.ToString()
-                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                        </button>
-                    </div>
+    <div class="container py-5">
+        <!-- Alert Success Start -->
+        @if (!string.IsNullOrWhiteSpace(TempData["CheckOutSuccessMessage"]?.ToString()))
+        {
+            <div class="w-100 d-flex justify-content-end">
+                <div class="alert alert-success alert-dismissible fade show r-0 mr-5" role="alert" id="alert_message" style="width:40%">
+                    <strong>Success!</strong> @TempData["CheckOutSuccessMessage"]?.ToString()
+                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                    </button>
                 </div>
-            }
-            <!-- Alert Success End -->
-            <!-- Alert Error Start -->
-            @if (!string.IsNullOrWhiteSpace(TempData["CheckOutErrorMessage"]?.ToString()))
-            {
-                <div class="w-100 d-flex justify-content-end">
-                    <div class="alert alert-danger alert-dismissible fade show r-0 mr-5" role="alert" id="alert_message" style="width:40%">
-                        <strong>Success!</strong> @TempData["CheckOutErrorMessage"]?.ToString()
-                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                        </button>
-                    </div>
-                </div>
-            }
-            <!-- Alert Error End -->
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Products</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Handle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr id="idProduct-@item.IdProduct">
-                                <th scope="row">
-                                    <div class="d-flex align-items-center">
-                                        <img src="~/images/SanPham/@item.Img" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="@item.Img">
-                                    </div>
-                                </th>
-                                <td>
-                                    <p class="mb-0 mt-4">@item.Name</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">@item.Price.ToString("#,##0 VND")</p>
-                                </td>
-                                <td>
-                                    <div class="input-group quantity mt-4" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button product-id="@item.IdProduct"
-                                                    onclick="clickBtnQuantity(false)"
-                                                    class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text"
-                                               id="quantityProduct"
-                                               product-id-input="@item.IdProduct"
-                                               class="form-control form-control-sm text-center border-0"
-                                               value="@item.Quantity">
-                                        <div class="input-group-btn">
-                                            <button product-id="@item.IdProduct"
-                                                    onclick="clickBtnQuantity(true)"
-                                                    class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p id="totalProduct" class="mb-0 mt-4">@item.Total.ToString("#,##0 VND")</p>
-                                </td>
-                                <td>
-                                    <button onclick="clickDeleteProduct(@item.IdProduct)"
-                                            class="btn btn-md rounded-circle bg-light border mt-4">
-                                        <i class="fa fa-times text-danger"></i>
-                                    </button>
-                                </td>
-
-                            </tr>
-
-                        }
-                    </tbody>
-                </table>
             </div>
-            <div class="row g-4 justify-content-end">
+        }
+        <!-- Alert Success End -->
+        <!-- Alert Error Start -->
+        @if (!string.IsNullOrWhiteSpace(TempData["CheckOutErrorMessage"]?.ToString()))
+        {
+            <div class="w-100 d-flex justify-content-end">
+                <div class="alert alert-danger alert-dismissible fade show r-0 mr-5" role="alert" id="alert_message" style="width:40%">
+                    <strong>Success!</strong> @TempData["CheckOutErrorMessage"]?.ToString()
+                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                    </button>
+                </div>
+            </div>
+        }
+        <!-- Alert Error End -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Products</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Handle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="idProduct-@item.IdProduct">
+                            <th scope="row">
+                                <div class="d-flex align-items-center">
+                                    <img src="~/images/SanPham/@item.Img" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="@item.Img">
+                                </div>
+                            </th>
+                            <td>
+                                <p class="mb-0 mt-4">@item.Name</p>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4">@item.Price.ToString("#,##0 VND")</p>
+                            </td>
+                            <td>
+                                <div class="input-group quantity mt-4" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button product-id="@item.IdProduct"
+                                                onclick="clickBtnQuantity(false)"
+                                                class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text"
+                                           id="quantityProduct"
+                                           product-id-input="@item.IdProduct"
+                                           class="form-control form-control-sm text-center border-0"
+                                           value="@item.Quantity">
+                                    <div class="input-group-btn">
+                                        <button product-id="@item.IdProduct"
+                                                onclick="clickBtnQuantity(true)"
+                                                class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p id="totalProduct" class="mb-0 mt-4">@item.Total.ToString("#,##0 VND")</p>
+                            </td>
+                            <td>
+                                <button onclick="clickDeleteProduct(@item.IdProduct)"
+                                        class="btn btn-md rounded-circle bg-light border mt-4">
+                                    <i class="fa fa-times text-danger"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div >
+            <form asp-controller="Cart" asp-action="CheckOut" class="row g-4 justify-content-end">
                 <div class="col-8"></div>
                 <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
                     <div class="bg-light rounded">
@@ -115,9 +115,10 @@
                         <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="submit">Proceed Checkout</button>
                     </div>
                 </div>
-            </div>
+
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 <!-- Cart Page End -->
 <script>
@@ -134,7 +135,7 @@
     //------------- Delete Product Start ---------------
     function clickDeleteProduct(idProduct) {
         $.ajax({
-            url: '@Url.Action("RemoveCart","Cart")',
+            url: '@Url.Action("RemoveCart", "Cart")',
             data: { id: idProduct },
             success: function (data) {
                 console.log("Delete Success ", idProduct);
@@ -145,7 +146,7 @@
 
                 //Load lại tổng tiền thanh toán
                 $.ajax({
-                    url: '@Url.Action("GetTotalAmount","Cart")',
+                    url: '@Url.Action("GetTotalAmount", "Cart")',
                     success: function (total) {
                         $("#totalCheckout p").text(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " VND");
                     },
@@ -156,7 +157,7 @@
 
                 //Load lại Cart ViewComponent
                 $.ajax({
-                    url: '@Url.Action("RefreshCartViewComponent","Cart")',
+                    url: '@Url.Action("RefreshCartViewComponent", "Cart")',
                     success: function (data) {
                         console.log(data)
                         $("#cart_view_component").html(data);
@@ -196,7 +197,7 @@
 
         // Ajax gọi action ChangeQuantityCart trong Cart Controller
         $.ajax({
-            url: '@Url.Action("ChangeQuantityCart","Cart")',
+            url: '@Url.Action("ChangeQuantityCart", "Cart")',
             data: { id: productId, isIncrement: increment, quantity: 1 },
             success: function (data) {
                 console.log("ChangeQuantityCart Success ", productId, ' Increment: ', increment);
@@ -211,7 +212,7 @@
                 } else {
                     //Load lại tổng tiền theo từng Product
                     $.ajax({
-                        url: '@Url.Action("GetTotalProduct","Cart")',
+                        url: '@Url.Action("GetTotalProduct", "Cart")',
                         data: { idProduct: productId },
                         success: function (total) {
                             $("#totalProduct").text(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " VND");
@@ -224,7 +225,7 @@
 
                 //Load lại tổng tiền thanh toán
                 $.ajax({
-                    url: '@Url.Action("GetTotalAmount","Cart")',
+                    url: '@Url.Action("GetTotalAmount", "Cart")',
                     success: function (total) {
                         $("#totalCheckout p").text(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " VND");
                     },
@@ -235,7 +236,7 @@
 
                 //Load lại Cart ViewComponent
                 $.ajax({
-                    url: '@Url.Action("RefreshCartViewComponent","Cart")',
+                    url: '@Url.Action("RefreshCartViewComponent", "Cart")',
                     success: function (data) {
                         console.log(data)
                         $("#cart_view_component").html(data);

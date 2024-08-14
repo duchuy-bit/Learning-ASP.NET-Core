@@ -45,47 +45,291 @@ namespace ShopManager.Areas.Admin.DAL
             connect.closeConnection();
             return list;
         }
-        public bool AddNew(CategoryAdmin categoryAdd)
+
+        public List<RevenueAdmin> GetTotalRevenue_WithMonth_InYear(int year)
         {
             connect.openConnection();
 
-            int id = 0;
+            List<RevenueAdmin> list = new List<RevenueAdmin>();
 
             using (SqlCommand command = new SqlCommand())
             {
                 command.Connection = connect.getConnecttion();
                 command.CommandType = System.Data.CommandType.Text;
 
-                string query = @"insert into category(title, content, createAt, updateAt)
-                    values(@title, @content, @createAt, @updateAt); ";
+                string query = @"SELECT 
+                        MONTH(createAt) AS Month,
+                        SUM(total) AS TotalRevenue
+                    FROM 
+                        payment
+                    WHERE 
+                        YEAR(createAt) = @year
+                    GROUP BY 
+                        MONTH(createAt)
+                    ORDER BY 
+                        Month;";
 
                 command.CommandText = query;
+                command.Parameters.AddWithValue("@year", year);
 
-                command.Parameters.AddWithValue("@title", categoryAdd.Title);
-                command.Parameters.AddWithValue("@content", categoryAdd.Content);
-                command.Parameters.AddWithValue("@createAt", categoryAdd.CreateAt);
-                command.Parameters.AddWithValue("@updateAt", categoryAdd.UpdateAt);
+                SqlDataReader reader = command.ExecuteReader();
 
-                Console.WriteLine("command Insert Category: " + command.CommandText);
-
-                id = command.ExecuteNonQuery();
+                while (reader.Read())
+                {
+                    RevenueAdmin revenueAdmin = new RevenueAdmin()
+                    {
+                        Month = Convert.ToInt32(reader["Month"]),
+                        TotalRevenue = Convert.ToInt64(reader["TotalRevenue"])
+                    };
+                    list.Add(revenueAdmin);
+                }
             }
             connect.closeConnection();
-            return id > 0;
+            return list;
         }
 
-        public CategoryAdmin getCategoryById(int id)
+        public List<PaymentInMonth> GetCountPayment_WithMonth_InYear(int year)
         {
             connect.openConnection();
 
-            CategoryAdmin category = new CategoryAdmin();
+            List<PaymentInMonth> list = new List<PaymentInMonth>();
 
             using (SqlCommand command = new SqlCommand())
             {
                 command.Connection = connect.getConnecttion();
                 command.CommandType = System.Data.CommandType.Text;
 
-                string query = @"select * from category where Id = " + id;
+                string query = @"SELECT 
+                        MONTH(createAt) AS Month,
+                        count(total) AS CountPayment
+                    FROM 
+                        payment
+                    WHERE 
+                        YEAR(createAt) = @year
+                    GROUP BY 
+                        MONTH(createAt)
+                    ORDER BY 
+                        Month;";
+
+                command.CommandText = query;
+                command.Parameters.AddWithValue("@year", year);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    PaymentInMonth paymentInMonth = new PaymentInMonth()
+                    {
+                        Month = Convert.ToInt32(reader["Month"]),
+                        CountPayment = Convert.ToInt64(reader["CountPayment"])
+                    };
+                    list.Add(paymentInMonth);
+                }
+            }
+            connect.closeConnection();
+            return list;
+        }
+
+
+        public PaymentAdmin? GetPaymentById(int id)
+        {
+            connect.openConnection();
+            int count = 0;
+
+            PaymentAdmin payment = new PaymentAdmin();
+
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connect.getConnecttion();
+                command.CommandType = System.Data.CommandType.Text;
+
+                string query = @"select  p.id as PaymentId, c.id as CustomerId, p.firstName as FirstName, p.lastName as LastName, 
+                        p.email as Email, p.phone as Phone, p.createAt as CreateAt, p.total as Total, c.img as Img
+                        from payment p join customer c on c.id = p.customerId
+                        where p.id = @id ";
+
+                command.CommandText = query;
+                command.Parameters.AddWithValue("@id", id);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    count++;
+                    payment.Id = Convert.ToInt32(reader["PaymentId"]);
+                    payment.CustomerId = Convert.ToInt32(reader["CustomerId"]);
+                    payment.FirstName = Convert.ToString(reader["firstName"])!;
+                    payment.LastName = Convert.ToString(reader["lastName"])!;
+                    payment.Phone = Convert.ToString(reader["phone"])!;
+                    payment.Email = Convert.ToString(reader["email"])!;
+                    payment.Avatar = Convert.ToString(reader["img"])!;
+                    payment.Total = Convert.ToInt32(reader["total"]);
+                    payment.CreateAt = DateTime.Parse(reader["createAt"].ToString()!);
+                }
+            }
+            connect.closeConnection();
+            if (count == 0) return null;
+            return payment;
+        }
+
+
+        public List<PaymentDetailAdmin> GetPaymentDetail_ByPaymentId(int paymentId)
+        {
+            connect.openConnection();
+
+            List<PaymentDetailAdmin> list = new List<PaymentDetailAdmin>();
+
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connect.getConnecttion();
+                command.CommandType = System.Data.CommandType.Text;
+
+                string query = @"select p.id as PaymentId,pr.id as ProductId, pr.title as TitleProduct,
+                    pr.img as ProductImg, pd.price as Price, pd.quantity as Quantity, pd.total as TotalDetail
+                    from  payment p left join paymentDetail pd on p.id = pd.paymentId
+                    left join product pr on pr.id = pd.productId
+                    where p.id = @paymentId   ";
+
+                command.CommandText = query;
+                command.Parameters.AddWithValue("@paymentId", paymentId);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    PaymentDetailAdmin paymentDetailAdmin = new PaymentDetailAdmin()
+                    {
+                        ProductId = Convert.ToInt32(reader["ProductId"]),
+                        PaymentId = Convert.ToInt32(reader["PaymentId"]),
+                        Price = Convert.ToInt32(reader["Price"]),
+                        Quantity = Convert.ToInt32(reader["Quantity"]),
+                        TotalDetail = Convert.ToInt32(reader["TotalDetail"]),
+                        TitleProduct = reader["TitleProduct"].ToString()!,
+                        Img = reader["ProductImg"].ToString()!
+                    };
+
+                    list.Add(paymentDetailAdmin);
+                }
+            }
+            connect.closeConnection();
+            return list;
+        }
+
+
+        public List<PaymentAdmin> GetPayment_Pagination(int? page, int pageSize, string? search, string? sortOrder)
+        {
+            connect.openConnection();
+
+            List<PaymentAdmin> list = new List<PaymentAdmin>();
+
+            //Search
+            string condition = " where 1=1 ";
+            if (!String.IsNullOrEmpty(search))
+            {
+                condition = condition + " and ( firstName like '%" + search + "%' or lastName like '%"
+                    + search + "%' or email like '%" + search + "%' )";
+            }
+
+            //Sort
+            //Truy vấn Sắp xếp
+            string sortQuery = " ORDER BY id ";
+            if (!string.IsNullOrEmpty(sortOrder))
+            {
+                switch (sortOrder)
+                {
+                    case "id_desc":
+                        sortQuery = " ORDER BY id DESC ";
+                        break;
+                    case "firstName":
+                        sortQuery = " ORDER BY firstName ";
+                        break;
+                    case "firstName_desc":
+                        sortQuery = " ORDER BY firstName DESC ";
+                        break;
+                    case "lastName":
+                        sortQuery = " ORDER BY lastName ";
+                        break;
+                    case "lastName_desc":
+                        sortQuery = " ORDER BY lastName DESC ";
+                        break;
+                    case "createAt":
+                        sortQuery = " ORDER BY createAt ";
+                        break;
+                    case "createAt_desc":
+                        sortQuery = " ORDER BY createAt DESC ";
+                        break;
+                    case "total":
+                        sortQuery = " ORDER BY total ";
+                        break;
+                    case "total_desc":
+                        sortQuery = " ORDER BY total DESC ";
+                        break;
+
+                    default:
+                        sortQuery = " ORDER BY id ";
+                        break;
+                }
+            }
+
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connect.getConnecttion();
+                command.CommandType = System.Data.CommandType.Text;
+
+                string query = @"SELECT * FROM (
+	                SELECT ROW_NUMBER() OVER ( " + sortQuery + @" ) AS RowNumber , *  
+	                FROM payment 
+                    " + condition + @"
+	                )TableResult
+                WHERE TableResult.RowNumber BETWEEN( @PageIndex -1) * @PageSize + 1 
+                AND @PageIndex * @PageSize  ";
+
+                command.CommandText = query;
+                command.Parameters.AddWithValue("@PageIndex", page);
+                command.Parameters.AddWithValue("@PageSize", pageSize);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    PaymentAdmin payment = new PaymentAdmin()
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        CustomerId = Convert.ToInt32(reader["customerId"]),
+                        FirstName = Convert.ToString(reader["firstName"])!,
+                        LastName = Convert.ToString(reader["lastName"])!,
+                        Phone = Convert.ToString(reader["phone"])!,
+                        Email = Convert.ToString(reader["email"])!,
+                        Total = Convert.ToInt32(reader["total"]),
+                        CreateAt = DateTime.Parse(reader["createAt"].ToString()!),
+                    };
+                    list.Add(payment);
+                }
+            }
+            connect.closeConnection();
+            return list;
+        }
+
+        public int getCountRowPayment_Pagination(string? search)
+        {
+            connect.openConnection();
+            int count = 0;
+
+            //Search
+            string condition = " where 1=1 ";
+            if (!String.IsNullOrEmpty(search))
+            {
+                condition = condition + " and ( firstName like '%" + search + "%' or lastName like '%"
+                   + search + "%' or email like '%" + search + "%'  )";
+            }
+
+            //Truy vaans
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connect.getConnecttion();
+                command.CommandType = System.Data.CommandType.Text;
+
+                string query = @"SELECT Count(*) as CountRow  FROM payment " + condition;
 
                 command.CommandText = query;
 
@@ -93,70 +337,11 @@ namespace ShopManager.Areas.Admin.DAL
 
                 while (reader.Read())
                 {
-                    category.Id = id;
-                    category.Title = reader["Title"].ToString() ?? "";
-                    category.Content = reader["Content"].ToString() ?? "";
-                    category.CreateAt = DateTime.Parse(reader["CreateAt"]?.ToString());
-                    category.UpdateAt = DateTime.Parse(reader["UpdateAt"]?.ToString());
+                    count = Convert.ToInt32(reader["CountRow"]);
                 }
             }
             connect.closeConnection();
-            return category;
-        }
-
-        public bool updateCategoryById(int id, CategoryAdmin categoryUpdate)
-        {
-            connect.openConnection();
-
-            int isSuccess = 0;
-
-            using (SqlCommand command = new SqlCommand())
-            {
-                command.Connection = connect.getConnecttion();
-                command.CommandType = System.Data.CommandType.Text;
-
-                string query = @"update category
-                    set title = @title, content = @content,  updateAt = @updateAt
-                    where Id = @id";
-
-                command.CommandText = query;
-
-                command.Parameters.AddWithValue("@id", id);
-                command.Parameters.AddWithValue("@title", categoryUpdate.Title);
-                command.Parameters.AddWithValue("@content", categoryUpdate.Content);
-                command.Parameters.AddWithValue("@updateAt", categoryUpdate.UpdateAt);
-
-                Console.WriteLine("command update Category: " + command.CommandText);
-
-                isSuccess = command.ExecuteNonQuery();
-            }
-            connect.closeConnection();
-            return isSuccess > 0;
-        }
-
-        public bool deleteCategoryById(int id)
-        {
-            connect.openConnection();
-
-            int isSuccess = 0;
-
-            using (SqlCommand command = new SqlCommand())
-            {
-                command.Connection = connect.getConnecttion();
-                command.CommandType = System.Data.CommandType.Text;
-
-                string query = @"DELETE FROM category WHERE id = @id;";
-
-                command.CommandText = query;
-
-                command.Parameters.AddWithValue("@id", id);
-
-                Console.WriteLine("command delete Category: " + command.CommandText);
-
-                isSuccess = command.ExecuteNonQuery();
-            }
-            connect.closeConnection();
-            return isSuccess > 0;
+            return count;
         }
     }
 }
