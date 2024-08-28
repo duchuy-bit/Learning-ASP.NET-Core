@@ -11,20 +11,11 @@ namespace ShopManager.Helper
     {
         private IWebHostEnvironment Environment { get; set; }
         public IConfiguration Configuration { get; set; }
-        private readonly IConfiguration _configuration;
 
-        private readonly IRazorLightEngine _razorLightEngine;
-
-        public MailHelper(IConfiguration _configuration, IWebHostEnvironment environment, IConfiguration configuration, IConfiguration iConfiguration)
+        public MailHelper(IConfiguration _configuration, IWebHostEnvironment environment)
         {
             Configuration = _configuration;
             Environment = environment;
-
-            // Tạo RazorLightEngine
-            _razorLightEngine = new RazorLightEngineBuilder()
-                .UseFileSystemProject(Path.Combine(Directory.GetCurrentDirectory(), "Views"))
-                .UseMemoryCachingProvider()
-                .Build();
         }
 
         public string PopulateBody(string OTP)
